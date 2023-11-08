@@ -1,12 +1,19 @@
-version: '1'
+version: '2'
 
 services:
+
+  server:
+    build: /server
+    ports: 
+      - '5050:5050'
+    networks:
+      - project-network-net
 
   db:
     image: mongo
     container_name: mongo_db
     ports:
-      - "27017:27017" # port forward to 27018 for local development
+      - "27017:27017"
     volumes:
       - db_data:/foo
       - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
