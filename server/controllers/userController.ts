@@ -1,7 +1,22 @@
 import { Request, Response } from "express"
+import { Types } from "mongoose"
 import jwt from "jsonwebtoken"
 import hashMiddleware from "../middleware/hashMiddleware"
 import User from "../models/userModels"
+
+interface userObj {
+    _id : Types.ObjectId
+    username : string
+    email : string
+}
+
+const generateToken = (userObj : userObj) => {
+    const accessToken = jwt.sign(
+        userObj,
+        process.env.ACCESS_TOKEN_SECRET as string
+    ) // NOTE : token does not have an expiration date 
+    return accessToken
+}
 
 // @ desc Register User
 // @ route POST /api/users/
@@ -24,16 +39,24 @@ const registerUser = async (req: Request, res: Response) => {
         const hashedPassword = await hashMiddleware.hashPassword(password)
 
         // adds user to database
-        const user = await User.create({
+        const newUser = await User.create({
             username: username,
             email: email,
             password: hashedPassword
         })
 
+        const userObj = {
+            _id : newUser._id,
+            username : newUser.username,
+            email : newUser.email
+        } 
+
         // send confirmation user has been registered
-        if (user) {
+        if (newUser) {
             return res.status(201).json({
-                message: "User added to database"
+                message: "User Registered",
+                userObj,
+                accessToken : generateToken(userObj)
             })
         }
 
@@ -66,20 +89,18 @@ const loginUser = async (req: Request, res: Response) => {
             const isMatch = await hashMiddleware.comparePasswordHash(password, user.password)
 
             if (isMatch) {
-                // authorize user by sending a jwt with user id, and username
-                const authUser = {
-                    _id: user._id,
-                    username: user.username,
-                    email: email
-                }
-
-                const accessToken = jwt.sign(
-                    authUser,
-                    process.env.ACCESS_TOKEN_SECRET as string
-                ) // NOTE : token does not have an expiration date
-
                 return res.status(201).json({ 
-                    accessToken : accessToken 
+                    message : "User Logged In",
+                    userObj : {
+                        _id : user._id,
+                        username : user.username,
+                        email : user.email
+                    },
+                    accessToken : generateToken({
+                        _id : user._id,
+                        username : user.username,
+                        email : user.email
+                    })
                 })
 
             } else {
