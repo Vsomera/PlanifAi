@@ -2,13 +2,6 @@ version: '2'
 
 services:
 
-  server:
-    build: /server
-    ports: 
-      - '5050:5050'
-    networks:
-      - project-network-net
-
   db:
     image: mongo
     container_name: mongo_db
@@ -17,6 +10,13 @@ services:
     volumes:
       - db_data:/foo
       - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    networks:
+      - project-network-net
+
+  server:
+    build: /server
+    ports: 
+      - '5050:5050'
     networks:
       - project-network-net
 

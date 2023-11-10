@@ -13,7 +13,7 @@ const port = process.env.PORT;
 app.use(express.json())
 app.use(cors())
 
-// User Routes
+app.use("/api/users", require("../routes/userRoutes"))
 // Plans Routes
 // Itinerary Routes
 
