@@ -14,8 +14,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use("/api/users", require("../routes/userRoutes"))
-// Plans Routes
-// Itinerary Routes
+// app.use("/api/plans", require("../routes/planRoutes"))
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

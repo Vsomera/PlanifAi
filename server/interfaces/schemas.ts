@@ -6,16 +6,10 @@ export interface userSchema {
     password: string
 }
 
-export interface planSchema { 
-    // a folder containing a collection of itineraries
+export interface planSchema {
     user_id : mongoose.Schema.Types.ObjectId // associated with a user
     plan_name : string
-}
-
-export interface itinerarySchema {
-    plan_id : mongoose.Schema.Types.ObjectId // associated with a plan
-    itinerary_name : string
-    places : [
+    itinerary : [
         {
             location_id : string
             location_name : string

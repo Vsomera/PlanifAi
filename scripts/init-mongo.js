@@ -2,7 +2,6 @@
 db = db.getSiblingDB('project_db');
 db.createCollection('users');
 db.createCollection('plans');
-db.createCollection('itinerary');
 
 // db.createUser({
 //   user: 'root',
