@@ -133,6 +133,41 @@ const deletePlanById = async (req: Request, res: Response) => {
     }
 }
 
+const fetchPlacesFromPlanId = async (req : Request, res : Response) => {
+    try {
+        const { user } = req;
+        const { plan_id } = req.params;
+
+        if (!user) {
+            return res.status(403).json({
+                error: "User not Authorized"
+            });
+        }
+
+        // check if plan exists
+        const plan = await Plan.findOne({ _id: plan_id, user_id: user._id });
+
+        if (!plan) { // if plan doesn't exist
+            return res.status(404).json({
+                message : "Could not fetch places",
+                error: "Plan does not exist or does not belong to the user"
+            });
+        }
+
+        return res.status(200).json({
+            itinerary: plan.itinerary
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Could not fetch places",
+            err
+        });
+    }
+};
+
+
 const addPlaceToPlan = async (req: Request, res: Response) => {
     try {
         const { user } = req
@@ -235,6 +270,7 @@ export default {
     createPlan,
     editPlanName,
     deletePlanById,
+    fetchPlacesFromPlanId,
     addPlaceToPlan,
     deletePlaceById
 }

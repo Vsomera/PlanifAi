@@ -30,6 +30,10 @@ router.put("/:plan_id", authMiddleware.authenticateToken, planController.editPla
 // @ access Private
 router.delete("/:plan_id", authMiddleware.authenticateToken, planController.deletePlanById)
 
+// @ desc Fetch all places from a plan
+// @ router GET /api/plans/:plan_id
+// @ access Private
+router.get("/:plan_id", authMiddleware.authenticateToken, planController.fetchPlacesFromPlanId)
 
 // @ desc Add a place to the plan itinerary
 // @ route POST /api/plans/:plan_name
