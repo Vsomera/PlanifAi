@@ -7,7 +7,7 @@ const router = express.Router()
 // @ desc Create a plan
 // @ route POST /api/plan/
 // @ access Private
-/*
+/* REQUEST BODY
     {
         plan_name : string
     }
@@ -17,7 +17,7 @@ router.post("/", authMiddleware.authenticateToken, planController.createPlan)
 // @ desc Edit a plan name
 // @ route PUT /api/plan/:plan_id
 // @ access Private
-/*
+/* REQUEST BODY:
     {
         new_plan_name : string
     }
@@ -26,15 +26,15 @@ router.put("/:plan_id", authMiddleware.authenticateToken, planController.editPla
 
 
 // @ desc Edit a plan name
-// @ route DELETE /api/plan/:plan_id
+// @ route DELETE /api/plans/:plan_id
 // @ access Private
 router.delete("/:plan_id", authMiddleware.authenticateToken, planController.deletePlanById)
 
 
 // @ desc Add a place to the plan itinerary
-// @ route POST /api/plan/:plan_name
+// @ route POST /api/plans/:plan_name
 // @ access Private
-/*
+/* REQUEST BODY:
     {
         place : {
             location_id : string
@@ -52,10 +52,13 @@ router.delete("/:plan_id", authMiddleware.authenticateToken, planController.dele
 */
 router.post("/:plan_id", authMiddleware.authenticateToken, planController.addPlaceToPlan)
 
-    // // Edit places the Itinerary
-    // router.put("/:plan_name/:id", authMiddleware.authenticateToken)
+// TODO
+// // Edit places the Itinerary (re-arranging places in itinerary of a given plan)
+// router.put("/:plan_name/:id", authMiddleware.authenticateToken)
 
-// // Delete places in the Itinerary
-// router.delete(":plan_name/:id", authMiddleware.authenticateToken)
+// @ desc Delete a place in the itinerary array given a location id
+// @ route DELETE /api/plans/:plan_id/:location_id
+// @ access Private
+router.delete("/:plan_id/:location_id", authMiddleware.authenticateToken, planController.deletePlaceById)
 
 module.exports = router

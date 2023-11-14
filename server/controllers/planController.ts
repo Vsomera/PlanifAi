@@ -1,6 +1,4 @@
 import { Request, Response } from "express"
-import { Types } from "mongoose"
-import jwt from "jsonwebtoken"
 import Plan from "../models/planModels"
 
 declare module 'express' {
@@ -154,7 +152,7 @@ const addPlaceToPlan = async (req: Request, res: Response) => {
             )
             if (addPlace) {
                 return res.status(201).json({
-                    message : `${place.location_name} added to itinerary`
+                    message: `${place.location_name} added to itinerary`
                 })
             }
         } else {
@@ -172,10 +170,71 @@ const addPlaceToPlan = async (req: Request, res: Response) => {
     }
 }
 
+const deletePlaceById = async (req: Request, res: Response) => {
+    try {
+        const { user } = req
+        const { plan_id, location_id } = req.params
+
+        if (user) {
+
+            const selectedPlan = await Plan.findOne({
+                // check if plan exists
+                _id: plan_id,
+                user_id: user._id
+            });
+
+            // checks itinerary array to see if the place exists
+            const placeExists = selectedPlan?.itinerary.findIndex((place) => place.location_id === location_id) !== -1
+            
+            if (selectedPlan) {
+                if (placeExists) {
+                    // checks if plan and place exists before executing
+                    const deletePlace = await Plan.findOneAndUpdate(
+                        {
+                            _id: plan_id,
+                            user_id: user._id
+                        },
+                        {
+                            // removes places that matches the location_id
+                            $pull: { itinerary: { location_id: location_id } }
+                        },
+                        { new: true })
+
+                    return res.status(200).json({
+                        message: `Place Deleted from ${deletePlace?.plan_name}`,
+                    })
+                } else {
+                    return res.status(404).json({
+                        message : "Unable to delete place",
+                        error : `Place does not exist in ${selectedPlan.plan_name} itinerary`
+                    })
+                }
+            } else {
+                return res.status(404).json({
+                    error : `Plan does not exist`
+                })
+            }
+
+        } else {
+            return res.status(403).json({
+                message: "User not authorized"
+            })
+        }
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            message: "Could not remove Place",
+            err
+        })
+    }
+}
+
 
 export default {
     createPlan,
     editPlanName,
     deletePlanById,
-    addPlaceToPlan
+    addPlaceToPlan,
+    deletePlaceById
 }
