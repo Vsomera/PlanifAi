@@ -1,11 +1,11 @@
 import { Request, Response } from "express"
 import Plan from "../models/planModels"
+import User from "../models/userModels"
 
 declare module 'express' {
     interface Request {
         user?: {
             _id: string
-            username: string
             email: string
             iat: number
         }
@@ -17,35 +17,31 @@ const createPlan = async (req: Request, res: Response) => {
         const { user } = req
         const { plan_name } = req.body
 
-        if (user) {
-
-            const checkExists = await Plan.findOne({ user_id: user._id, plan_name })
-
-            if (checkExists) {
-                return res.status(400).json({
-                    message: "Could not create plan",
-                    error: "Plan already exists"
-                })
-            }
-
-            const newPlan = await Plan.create({
-                user_id: user._id,
-                plan_name,
-                itinerary: []
-            })
-
-            if (newPlan) {
-                return res.status(201).json({
-                    message: "New Plan Created",
-                    plan_id: newPlan._id,
-                })
-            }
-
-        } else {
+        const userExists = await User.findOne({ _id: user?._id })
+        if (!userExists) {
             return res.status(403).json({
                 message: "User not Authorized"
             })
         }
+
+        const planExists = await Plan.findOne({ user_id: user?._id, plan_name })
+        if (planExists) {
+            return res.status(400).json({
+                message: "Could not create plan",
+                error: "Plan already exists"
+            })
+        }
+
+        const newPlan = await Plan.create({
+            user_id: user?._id,
+            plan_name,
+            itinerary: []
+        })
+
+        return res.status(201).json({
+            message: "New Plan Created",
+            plan_id: newPlan._id,
+        })
 
     } catch (err) {
         console.log(err)
@@ -62,11 +58,19 @@ const editPlanName = async (req: Request, res: Response) => {
         const { plan_id } = req.params
         const { new_plan_name } = req.body
 
-        if (user) {
+        const userExists = await User.findOne({ _id: user?._id })
+        if (!userExists) {
+            return res.status(403).json({
+                message: "User not Authorized"
+            })
+        }
+        
+        const planExists = await Plan.findOne({ _id : plan_id, user_id : user?._id })
+        if (planExists) {
             const editPlan = await Plan.findOneAndUpdate(
                 {
                     _id: plan_id,
-                    user_id: user._id
+                    user_id: user?._id
                 },
                 {
                     plan_name: new_plan_name
@@ -76,22 +80,19 @@ const editPlanName = async (req: Request, res: Response) => {
                 return res.status(200).json({
                     message: "Plan Name Changed"
                 })
-            } else {
-                return res.status(404).json({
-                    message: "Could not Edit Plan",
-                    error: "Plan does not exist"
-                })
-            }
+            } 
         } else {
-            return res.status(403).json({
-                message: "User not Authorized"
+            return res.status(404).json({
+                message: "Could not Edit Plan",
+                error: "Plan does not exist"
             })
         }
-
+       
     } catch (err) {
         console.log(err)
-        return res.status(400).json({
+        return res.status(500).json({
             message: "Could not Edit Plan",
+            err
         })
     }
 }
@@ -101,32 +102,35 @@ const deletePlanById = async (req: Request, res: Response) => {
         const { user } = req
         const { plan_id } = req.params
 
-        if (user) {
-            const deletePlan = await Plan.findOneAndDelete(
-                {
-                    _id: plan_id,
-                    user_id: user._id
-                }
-            )
-            if (deletePlan) {
-                return res.status(200).json({
-                    message: `${deletePlan.plan_name} Deleted`
-                })
-            } else {
-                return res.status(404).json({
-                    message: "Could not Delete Plan",
-                    error: "Plan does not exist"
-                })
-            }
-        } else {
+
+        const userExists = await User.findOne({ _id: user?._id })
+        if (!userExists) {
             return res.status(403).json({
                 message: "User not Authorized"
             })
         }
+        
+        const deletePlan = await Plan.findOneAndDelete(
+            {
+                _id: plan_id,
+                user_id: user?._id
+            }
+        )
+        if (deletePlan) {
+            return res.status(200).json({
+                message: `${deletePlan.plan_name} Deleted`
+            })
+        } else {
+            return res.status(404).json({
+                message: "Could not Delete Plan",
+                error: "Plan does not exist"
+            })
+        }
+
 
     } catch (err) {
         console.log(err)
-        return res.status(400).json({
+        return res.status(500).json({
             message: "Could not Delete Plan",
             err
         })
@@ -138,15 +142,14 @@ const fetchPlacesFromPlanId = async (req : Request, res : Response) => {
         const { user } = req;
         const { plan_id } = req.params;
 
-        if (!user) {
+        const userExists = await User.findOne({ _id : user?._id})
+        if (!userExists) {
             return res.status(403).json({
                 error: "User not Authorized"
             });
         }
 
-        // check if plan exists
-        const plan = await Plan.findOne({ _id: plan_id, user_id: user._id });
-
+        const plan = await Plan.findOne({ _id: plan_id, user_id: user?._id });
         if (!plan) { // if plan doesn't exist
             return res.status(404).json({
                 message : "Could not fetch places",
@@ -174,31 +177,31 @@ const addPlaceToPlan = async (req: Request, res: Response) => {
         const { plan_id } = req.params
         const { place } = req.body
 
-        if (user) {
-            const addPlace = await Plan.findOneAndUpdate(
-                {
-                    _id: plan_id,
-                    user_id: user._id,
-                },
-                {
-                    // appends place object to itinerary array
-                    $push: { itinerary: place }
-                }
-            )
-            if (addPlace) {
-                return res.status(201).json({
-                    message: `${place.location_name} added to itinerary`
-                })
-            }
-        } else {
+        const userExists = await User.findOne({ _id : user?._id})
+        if (!userExists) {
             return res.status(403).json({
-                message: "User not Authorized"
+                error: "User not Authorized"
+            });
+        }
+        const addPlace = await Plan.findOneAndUpdate(
+            {
+                _id: plan_id,
+                user_id: user?._id,
+            },
+            {
+                // appends place object to itinerary array
+                $push: { itinerary: place }
+            }
+        )
+        if (addPlace) {
+            return res.status(201).json({
+                message: `${place.location_name} added to itinerary`
             })
         }
 
     } catch (err) {
         console.log(err)
-        return res.status(400).json({
+        return res.status(500).json({
             message: "Could not add Place",
             err
         })
@@ -210,49 +213,41 @@ const deletePlaceById = async (req: Request, res: Response) => {
         const { user } = req
         const { plan_id, location_id } = req.params
 
-        if (user) {
-
-            const selectedPlan = await Plan.findOne({
-                // check if plan exists
-                _id: plan_id,
-                user_id: user._id
+        const userExists = await User.findOne({ _id : user?._id})
+        if (!userExists) {
+            return res.status(403).json({
+                error: "User not Authorized"
             });
+        }
 
-            // checks itinerary array to see if the place exists
-            const placeExists = selectedPlan?.itinerary.findIndex((place) => place.location_id === location_id) !== -1
-            
-            if (selectedPlan) {
-                if (placeExists) {
-                    // checks if plan and place exists before executing
-                    const deletePlace = await Plan.findOneAndUpdate(
-                        {
-                            _id: plan_id,
-                            user_id: user._id
-                        },
-                        {
-                            // removes places that matches the location_id
-                            $pull: { itinerary: { location_id: location_id } }
-                        },
-                        { new: true })
-
-                    return res.status(200).json({
-                        message: `Place Deleted from ${deletePlace?.plan_name}`,
-                    })
-                } else {
-                    return res.status(404).json({
-                        message : "Unable to delete place",
-                        error : `Place does not exist in ${selectedPlan.plan_name} itinerary`
-                    })
-                }
+        const selectedPlan = await Plan.findOne({ _id: plan_id, user_id: user?._id })
+        const placeExists = selectedPlan?.itinerary.findIndex((place) => place.location_id === location_id) !== -1
+        
+        if (selectedPlan) {
+            if (placeExists) {
+                const deletedPlace = await Plan.findOneAndUpdate(
+                    {
+                        _id: plan_id,
+                        user_id: user?._id
+                    },
+                    {
+                        // removes places that matches the location_id
+                        $pull: { itinerary: { location_id: location_id } }
+                    },
+                    { new: true })
+                return res.status(200).json({
+                    message: `Place Deleted from ${deletedPlace?.plan_name}`,
+                })
             } else {
                 return res.status(404).json({
-                    error : `Plan does not exist`
+                    message : "Unable to delete place",
+                    error : `Place does not exist in ${selectedPlan.plan_name} itinerary`
                 })
             }
-
         } else {
-            return res.status(403).json({
-                message: "User not authorized"
+            return res.status(404).json({
+                message : "Unable to delete place",
+                error : `Plan does not exist`
             })
         }
 
@@ -264,7 +259,6 @@ const deletePlaceById = async (req: Request, res: Response) => {
         })
     }
 }
-
 
 export default {
     createPlan,

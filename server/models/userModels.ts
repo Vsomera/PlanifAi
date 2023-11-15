@@ -3,10 +3,6 @@ import { Schema } from "mongoose"
 import mongoose from "mongoose"
 
 const userSchema = new Schema<userSchema>({
-    username: {
-        type: String,
-        required: [true, "Please Enter a Name"]
-    },
     email: {
         type: String,
         required: [true, "Please Enter an Email"]
