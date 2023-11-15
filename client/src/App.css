@@ -27,7 +27,7 @@
     height: 40px;
     color: black;
     padding: 0 10px;
-    border-bottom: 1.2px solid black;
+    border-bottom: 0.5px solid black;
 }
 
 .input-container input:focus~label,
@@ -43,4 +43,7 @@
     padding: 8px;
     background-color: #006AFF;
     border-radius: 8px;
+}
+.auth-btn:hover {
+    background-color: #005ddf;
 }
