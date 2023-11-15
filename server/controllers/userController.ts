@@ -6,7 +6,6 @@ import User from "../models/userModels"
 
 interface userObj {
     _id : Types.ObjectId
-    username : string
     email : string
 }
 
@@ -24,7 +23,7 @@ const generateToken = (userObj : userObj) => {
 
 const registerUser = async (req: Request, res: Response) => {
     try {
-        const { username, email, password } = req.body
+        const { email, password } = req.body
 
         // checks if user already exists in database
         const checkEmail = await User.findOne({ email: email })
@@ -40,14 +39,12 @@ const registerUser = async (req: Request, res: Response) => {
 
         // adds user to database
         const newUser = await User.create({
-            username: username,
             email: email,
             password: hashedPassword
         })
 
         const userObj = {
             _id : newUser._id,
-            username : newUser.username,
             email : newUser.email
         } 
 
@@ -93,12 +90,10 @@ const loginUser = async (req: Request, res: Response) => {
                     message : "User Logged In",
                     userObj : {
                         _id : user._id,
-                        username : user.username,
                         email : user.email
                     },
                     accessToken : generateToken({
                         _id : user._id,
-                        username : user.username,
                         email : user.email
                     })
                 })

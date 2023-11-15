@@ -7,7 +7,6 @@ const router = express.Router()
 // @ route  POST /api/users/
 // @ access Public
 /*
-    username : string
     email : string
     password : string
 */
