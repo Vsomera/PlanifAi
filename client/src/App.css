@@ -1,0 +1,46 @@
+.gradient-overlay {
+    background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0.1),  #1c1c1c);
+    position: absolute;
+    z-index: 2; 
+}
+/* Login and Register Page*/
+.auth-container {
+    height: 20rem;
+}
+.input-container {
+    position: relative;
+    margin: 20px 0;
+}
+.input-container label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #1c1c1c;
+    padding: 0 5px;
+    pointer-events: none;
+    transition: .2s;
+}
+.input-container input {
+    width: 320px;
+    height: 40px;
+    color: black;
+    padding: 0 10px;
+    border-bottom: 1.2px solid black;
+}
+
+.input-container input:focus~label,
+.input-container input:valid~label {
+    top : 0;
+    font-size: 12px;
+    background: white;
+}
+
+.auth-btn {
+    color: #fff;
+    width: 320px;
+    padding: 8px;
+    background-color: #006AFF;
+    border-radius: 8px;
+}
