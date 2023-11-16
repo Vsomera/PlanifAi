@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend+Exa&family=Poppins&family=Sen&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Exa&family=Poppins&family=Sen&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +9,6 @@
 body {
   min-width: auto;
   min-height: auto;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin: 0;
 }
