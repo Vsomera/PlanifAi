@@ -1,6 +1,59 @@
 import AppLogo from "../assets/AppLogo"
+import { useState } from "react"
+import { toast } from "react-toastify"
+import { registerUser } from "../services/userService"
 
 const Register = () => {
+
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [confPass, setConfPass] = useState("")
+
+    const validPassword = () => {
+        if (password == confPass) {
+            const minLength = 8
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
+
+            const validLength =  password.length >= minLength 
+            const containsSpecial = password && specialCharRegex.test(password)
+
+            if (validLength && containsSpecial) {
+                return true
+            } else if (!validLength) {
+                toast.error("Password must contain at least 8 characters")
+            } else if (!containsSpecial) {
+                toast.error("Password must contain a special character (eg. !@#$%^&*)(-=))")
+            }
+        } else {
+            toast.error("Passwords do not match")
+        }
+        return false
+    }
+
+    const validEmail = () => {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (emailRegex.test(email)) {
+            return true
+        }
+        toast.error("Invalid Email Address")
+        return false
+    }
+
+    const handleRegister = async () => {
+        if ( (email && password && confPass) !== "" ) {
+            if (validPassword() && validEmail()) {
+                const register = await registerUser(email, password)
+                if (register) {
+                    const accessToken = register.data.accessToken
+                    console.log(accessToken)
+                    return // TODO : save access token to local storage
+                }
+            }
+        } else {
+            toast.error("Empty Registration Fields")
+        }
+    }
+
     return (
         <div className="flex h-full">
 
@@ -31,6 +84,8 @@ const Register = () => {
                             <div>
                                 <div className="input-container">
                                     <input 
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         className="outline-none w-full auth-input"
                                         type="text" required/>
                                     <label htmlFor="">Email</label>
@@ -38,6 +93,8 @@ const Register = () => {
 
                                 <div className="input-container">
                                     <input 
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                         className="outline-none w-full auth-input"
                                         type="password" required/>
                                     <label htmlFor="">Password</label>
@@ -45,13 +102,17 @@ const Register = () => {
 
                                 <div className="input-container">
                                     <input 
+                                        value={confPass}
+                                        onChange={(e) => setConfPass(e.target.value)}
                                         className="outline-none w-full auth-input"
                                         type="password" required/>
                                     <label htmlFor="">Confirm Password</label>
                                 </div>
                             </div>
 
-                            <button className="auth-btn">
+                            <button 
+                                onClick={() => handleRegister()}
+                                className="auth-btn">
                                 Sign In
                             </button>
 

@@ -1,7 +1,26 @@
 import AppLogo from "../assets/AppLogo"
+import { loginUser } from "../services/userService"
+import { useState } from "react"
 import { toast } from "react-toastify"
 
 const Login = () => {
+
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const handleLogin = async () => {
+        if ((email && password) !== "") {
+            const login = await loginUser(email, password)
+            if (login) {
+                const accessToken = login.data.accessToken
+                console.log(accessToken)
+                return // TODO : save access token to local storage
+            }
+        } else {
+            toast.error("Empty Login Fields")
+        }
+    }
+
     return (
         <div className="flex h-full">
             <div className="w-2/4 relative text-center">
@@ -31,6 +50,8 @@ const Login = () => {
                             <div>
                                 <div className="input-container">
                                     <input 
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         className="outline-none w-full auth-input"
                                         type="text" required/>
                                     <label htmlFor="">Email</label>
@@ -38,6 +59,8 @@ const Login = () => {
 
                                 <div className="input-container">
                                     <input 
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                         className="outline-none w-full auth-input"
                                         type="password" required/>
                                     <label htmlFor="">Password</label>
@@ -45,7 +68,7 @@ const Login = () => {
                             </div>
 
                             <button 
-                                onClick={() => toast.success("Successfully Logged In!")}
+                                onClick={() => handleLogin()}
                                 className="auth-btn">
                                 Log In
                             </button>
