@@ -19,13 +19,12 @@ const Register = () => {
         // redirect to dashboard if user is already logged in
         if (user?.accessToken != null) {
             navigate("/")
-            toast.success("Welcome Back!")
         }
     })
 
     const validPassword = () => {
         if (password == confPass) {
-            const minLength = 8
+            const minLength = 10
             const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
 
             const validLength =  password.length >= minLength 
@@ -34,7 +33,7 @@ const Register = () => {
             if (validLength && containsSpecial) {
                 return true
             } else if (!validLength) {
-                toast.error("Password must contain at least 8 characters")
+                toast.error("Password must contain at least 10 characters")
             } else if (!containsSpecial) {
                 toast.error("Password must contain a special character (eg. !@#$%^&*)(-=))")
             }
