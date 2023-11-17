@@ -1,12 +1,19 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/userContext"
-import { toast } from "react-toastify"
+import Sidebar from "../components/Sidebar"
 
 const Dashboard = () => {
 
-    const { user, setUser } = useContext(UserContext)
+    const { user } = useContext(UserContext)
     const navigate = useNavigate()
+
+    const [selected, select] = useState(0)
+    const sidebarItem = {
+        main : 0,
+        map: 1,
+        recommended : 2
+    }
 
     useEffect(() => {
         if (user?.accessToken == null) {
@@ -15,15 +22,13 @@ const Dashboard = () => {
         }
     })
 
-    const handleSignOut = () => {
-        setUser(null)
-        toast.success("Logged Out")
-    }
-
     return (
-        <>
-            <button onClick={() => handleSignOut()}> SignOut </button>
-        </>
+        <div className="flex w-full h-full">
+            <Sidebar 
+                sidebarItem={sidebarItem} 
+                select={select}
+                selected={selected}/>
+        </div>
     )
 }
 
