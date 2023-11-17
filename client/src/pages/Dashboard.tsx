@@ -4,6 +4,9 @@ import { UserContext } from "../context/userContext"
 import ReactMapGL, { NavigationControl, Marker } from 'react-map-gl';
 import ReactLoading from 'react-loading';
 import Sidebar from "../components/Sidebar"
+import MainDashboard from "../components/MainDashboard";
+import ItineraryMap from "../components/ItineraryMap";
+import Recommended from "../components/Recommended";
 
 const Dashboard = () => {
 
@@ -20,7 +23,7 @@ const Dashboard = () => {
     const [viewState, setViewState] = useState({
         longitude: -123.10,
         latitude: 49.24,
-        zoom: 11
+        zoom: 10.8
     });
 
     useEffect(() => {
@@ -37,6 +40,17 @@ const Dashboard = () => {
                     sidebarItem={sidebarItem}
                     select={select}
                     selected={selected} />
+                    <main>
+                        {
+                            // Render Components based on the selected state
+                            selected == sidebarItem.main 
+                                ? <MainDashboard />
+                                : selected == sidebarItem.map 
+                                    ? <ItineraryMap />
+                                    : selected == sidebarItem.recommended 
+                                        && <Recommended />
+                        }
+                    </main>
                     { user?.accessToken ?
                             <ReactMapGL
                                 mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
