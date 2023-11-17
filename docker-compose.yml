@@ -20,6 +20,13 @@ services:
     networks:
       - project-network-net
 
+  client:
+    build: /client
+    ports: 
+      - '4173:4173'
+    networks:
+      - project-network-net
+
 volumes:
   db_data:
 
