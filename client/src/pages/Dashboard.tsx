@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/userContext"
 import ReactMapGL, { NavigationControl, Marker } from 'react-map-gl';
+import ReactLoading from 'react-loading';
 import Sidebar from "../components/Sidebar"
 
 const Dashboard = () => {
@@ -36,20 +37,30 @@ const Dashboard = () => {
                     sidebarItem={sidebarItem}
                     select={select}
                     selected={selected} />
-                    <ReactMapGL
-                        mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
-                        {...viewState}
-                        onMove={evt => setViewState(evt.viewState)}
-                        mapStyle="mapbox://styles/mapbox/streets-v12">
-                        <Marker
-                            longitude={-123.076570}
-                            latitude={49.254670}>
-                            <img
-                                className="cursor-pointer"
-                                src="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png" alt="" />
-                        </Marker>
-                        <NavigationControl visualizePitch={true} showZoom={false}/>
-                    </ReactMapGL>
+                    { user?.accessToken ?
+                            <ReactMapGL
+                                mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+                                {...viewState}
+                                onMove={evt => setViewState(evt.viewState)}
+                                mapStyle="mapbox://styles/mapbox/streets-v12">
+                                <Marker
+                                    longitude={-123.076570}
+                                    latitude={49.254670}>
+                                    <img
+                                        className="cursor-pointer"
+                                        src="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png" alt="" />
+                                </Marker>
+                                <NavigationControl visualizePitch={true} showZoom={false}/>
+                            </ReactMapGL>
+                        : 
+                            <div className="m-auto">
+                                <ReactLoading 
+                                    type="spin" 
+                                    height={"5rem"} 
+                                    width={"5rem"} 
+                                    color="#006AFF" />
+                            </div>
+                    }
             </div>
         </>
     )
