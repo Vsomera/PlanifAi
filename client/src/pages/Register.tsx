@@ -1,13 +1,27 @@
-import AppLogo from "../assets/AppLogo"
-import { useState } from "react"
-import { toast } from "react-toastify"
+import { useState, useContext, useEffect } from "react"
 import { registerUser } from "../services/userService"
+import { useNavigate } from "react-router-dom"
+import { UserContext } from "../context/userContext"
+import { toast } from "react-toastify"
+import AppLogo from "../assets/AppLogo"
 
 const Register = () => {
+
+    const { user, setUser } = useContext(UserContext)
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confPass, setConfPass] = useState("")
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        // redirect to dashboard if user is already logged in
+        if (user?.accessToken != null) {
+            navigate("/")
+            toast.success("Welcome Back!")
+        }
+    })
 
     const validPassword = () => {
         if (password == confPass) {
@@ -45,8 +59,8 @@ const Register = () => {
                 const register = await registerUser(email, password)
                 if (register) {
                     const accessToken = register.data.accessToken
-                    console.log(accessToken)
-                    return // TODO : save access token to local storage
+                    setUser({ "accessToken" : accessToken})
+                    console.log(user)
                 }
             }
         } else {

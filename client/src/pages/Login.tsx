@@ -1,20 +1,32 @@
-import AppLogo from "../assets/AppLogo"
+import { useState, useContext, useEffect } from "react"
+import { UserContext } from "../context/userContext"
+import { useNavigate } from "react-router-dom"
 import { loginUser } from "../services/userService"
-import { useState } from "react"
 import { toast } from "react-toastify"
+import AppLogo from "../assets/AppLogo"
 
 const Login = () => {
 
+    const { user, setUser } = useContext(UserContext)
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        // redirect to dashboard if user is already logged in
+        if (user?.accessToken != null) {
+            navigate("/")
+        }
+    })
 
     const handleLogin = async () => {
         if ((email && password) !== "") {
             const login = await loginUser(email, password)
             if (login) {
                 const accessToken = login.data.accessToken
-                console.log(accessToken)
-                return // TODO : save access token to local storage
+                setUser({ "accessToken" : accessToken })
             }
         } else {
             toast.error("Empty Login Fields")
