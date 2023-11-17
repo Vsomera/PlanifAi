@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/userContext"
+import ReactMapGL, { NavigationControl, Marker } from 'react-map-gl';
 import Sidebar from "../components/Sidebar"
 
 const Dashboard = () => {
@@ -10,10 +11,16 @@ const Dashboard = () => {
 
     const [selected, select] = useState(0)
     const sidebarItem = {
-        main : 0,
+        main: 0,
         map: 1,
-        recommended : 2
+        recommended: 2
     }
+
+    const [viewState, setViewState] = useState({
+        longitude: -123.10,
+        latitude: 49.24,
+        zoom: 11
+    });
 
     useEffect(() => {
         if (user?.accessToken == null) {
@@ -23,12 +30,28 @@ const Dashboard = () => {
     })
 
     return (
-        <div className="flex w-full h-full">
-            <Sidebar 
-                sidebarItem={sidebarItem} 
-                select={select}
-                selected={selected}/>
-        </div>
+        <>
+            <div className="flex w-full h-full">
+                <Sidebar
+                    sidebarItem={sidebarItem}
+                    select={select}
+                    selected={selected} />
+                    <ReactMapGL
+                        mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
+                        {...viewState}
+                        onMove={evt => setViewState(evt.viewState)}
+                        mapStyle="mapbox://styles/mapbox/streets-v12">
+                        <Marker
+                            longitude={-123.076570}
+                            latitude={49.254670}>
+                            <img
+                                className="cursor-pointer"
+                                src="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png" alt="" />
+                        </Marker>
+                        <NavigationControl visualizePitch={true} showZoom={false}/>
+                    </ReactMapGL>
+            </div>
+        </>
     )
 }
 
