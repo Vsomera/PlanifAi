@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 body {
+  overflow: hidden;
   min-width: auto;
   min-height: auto;
   font-family: "Poppins", sans-serif;

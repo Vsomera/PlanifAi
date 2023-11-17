@@ -35,7 +35,7 @@ const Dashboard = () => {
 
     return (
         <>
-            <div className="flex w-full h-full">
+            <div className="flex w-full h-full overflow-hidden">
                 <Sidebar
                     sidebarItem={sidebarItem}
                     select={select}
