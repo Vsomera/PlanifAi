@@ -16,7 +16,7 @@ git clone https://github.com/Vsomera/PlanifAi.git
 cd .\PlanifAi
 ```
 
-2.) Ensure docker is installed : https://docs.docker.com/get-docker/
+2.) Ensure docker is installed : https://docs.docker.com/get-docker/ then execute the command below:
 ```bash
 docker-compose up --build -d
 ```
