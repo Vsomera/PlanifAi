@@ -50,7 +50,7 @@
 
 /* Dashboard Sidebar */
 .sidebar {
-    width: 105px;
+    min-width: 105px;
 }
 .side-container {
     height: 95%;

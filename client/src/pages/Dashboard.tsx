@@ -64,6 +64,13 @@ const Dashboard = () => {
                                         className="cursor-pointer"
                                         src="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png" alt="" />
                                 </Marker>
+                                <Marker
+                                    longitude={-123.076570}
+                                    latitude={49.304670}>
+                                    <img
+                                        className="cursor-pointer"
+                                        src="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png" alt="" />
+                                </Marker>
                                 <NavigationControl visualizePitch={true} showZoom={false}/>
                             </ReactMapGL>
                         : 
