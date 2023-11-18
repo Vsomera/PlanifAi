@@ -9,9 +9,12 @@ Travel Planner with Ai Features
 
 ```bash
 git clone https://github.com/Vsomera/PlanifAi.git
-cd .\PlanifAi
 ```
 
+2.) cd into project directory
+```bash
+cd .\PlanifAi
+```
 
 2.) Ensure docker is installed : https://docs.docker.com/get-docker/
 ```bash
