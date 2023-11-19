@@ -3,12 +3,16 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  box-sizing: border-box;
-}
 body {
+  overflow: hidden;
   min-width: auto;
   min-height: auto;
   font-family: "Poppins", sans-serif;
   margin: 0;
+  box-sizing: border-box;
+}
+
+.mapboxgl-ctrl-bottom-left, 
+.mapboxgl-ctrl-bottom-right {
+  display: none;
 }

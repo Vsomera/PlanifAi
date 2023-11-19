@@ -47,3 +47,11 @@
 .auth-btn:hover {
     background-color: #005ddf;
 }
+
+/* Dashboard Sidebar */
+.sidebar {
+    min-width: 105px;
+}
+.side-container {
+    height: 95%;
+}
