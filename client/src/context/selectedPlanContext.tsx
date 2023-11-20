@@ -31,7 +31,7 @@ interface ItineraryItem {
   interface Props {
     children: ReactNode;
   }
-  export const PlanContextProvider: React.FC<Props> = ({ children }) => {
+  export const SelectedPlanContextProvider: React.FC<Props> = ({ children }) => {
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
     return (
       <SelectedPlanContext.Provider value={{ selectedPlan, setSelectedPlan }}>

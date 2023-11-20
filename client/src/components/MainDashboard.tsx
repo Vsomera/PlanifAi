@@ -4,18 +4,17 @@ import { PlansContext } from "../context/plansContext"
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { AiOutlineDelete } from "react-icons/ai";
-
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-
-
 import { FiEdit2 } from "react-icons/fi";
-
 import { useContext, useEffect, useState } from "react"
+import { SelectedPlanContext } from "../context/selectedPlanContext";
+import { Plan } from "../interfaces/plan";
 
 const MainDashboard = () => {
 
     const { user } = useContext(UserContext)
     const { plans, setPlans } = useContext(PlansContext)
+    const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
     const [dropDown, setDropDown] = useState(false)
 
@@ -31,6 +30,10 @@ const MainDashboard = () => {
         }
         getUserPlans()
     }, [])
+
+    const selectPlan = (plan : Plan) => {
+        setSelectedPlan(plan)
+    }   
 
     return (
         <div
@@ -84,6 +87,7 @@ const MainDashboard = () => {
                                                             return (
                                                                 <div 
                                                                     key={plan._id}
+                                                                    onClick={() => selectPlan(plan)}
                                                                     className="onHover bg-white flex justify-between p-4 text-left rounded-md">
                                                                     <h1>{plan.plan_name}</h1>
                                                                     <div className="flex w-12 items-center justify-between">
