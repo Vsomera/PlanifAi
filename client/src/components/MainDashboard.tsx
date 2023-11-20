@@ -37,12 +37,9 @@ const MainDashboard = () => {
 
     return (
         <div
-            style={{
-                backgroundColor: "rgba(255, 255, 255, 0.8)"
-            }}
+            style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
             className="z-20 h-full backdrop-blur-sm flex">
-
-                <div className="w-full flex flex-col overflow-y-auto	">
+                <div className="w-full flex flex-col overflow-y-auto">
                     <div 
                         style={{ height: "95%" }} 
                         className="w-11/12 m-auto flex flex-col justify-between">
@@ -108,19 +105,27 @@ const MainDashboard = () => {
                                     <p>Places Near Me</p>
                             </div> 
                             
-                            <div className="flex w-full h-1/2">
+                            <div className="flex justify-around items-center w-full h-1/2">
+                                
+                                    <div className="w-1/2">
+                                        <DateCalendar 
+                                            showDaysOutsideCurrentMonth 
+                                            fixedWeekNumber={6} />
+                                    </div>
 
-                                <div className="w-1/2 my-auto">
-                                    <DateCalendar 
-                                        showDaysOutsideCurrentMonth 
-                                        fixedWeekNumber={6} />
-                                </div>
-
-                                <div className="w-1/2 h-3/4 my-auto">
+                                    <div className="w-1/2">
                                     <h1 className="text-xl text-center">
-                                        Itinerary
-                                    </h1>
-                                </div>
+                                            {
+                                                selectedPlan?.itinerary && selectedPlan.itinerary.length > 0
+                                                    ? selectedPlan.itinerary.map((place) => (
+                                                        <h1 key={place.location_id}>
+                                                            {place.location_name}
+                                                        </h1> 
+                                                    ))
+                                                    : <p>No places in itinerary</p> // placeholder for now
+                                            }
+                                        </h1>
+                                    </div>
 
                             </div>
 
