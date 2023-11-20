@@ -6,13 +6,19 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { UserContextProvider } from './context/userContext.tsx';
-
+import { PlanContextProvider } from './context/plansContext.tsx';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <UserContextProvider>
-        <App />
-      <ToastContainer theme='colored'/>
-    </UserContextProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <PlanContextProvider>
+          <UserContextProvider>
+            <App />
+            <ToastContainer theme='colored' />
+          </UserContextProvider>
+        </PlanContextProvider>
+    </LocalizationProvider>
   </React.StrictMode>,
 )
