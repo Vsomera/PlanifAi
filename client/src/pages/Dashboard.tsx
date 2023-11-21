@@ -2,11 +2,13 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/userContext"
 import { toast } from "react-toastify";
+import { fetchPlans } from "../services/planService";
 import ReactMapGL, { NavigationControl, Marker } from 'react-map-gl';
 import ReactLoading from 'react-loading';
 import Sidebar from "../components/Sidebar"
 import MainDashboard from "../components/MainDashboard";
 import ItineraryMap from "../components/ItineraryMap";
+import { PlansContext } from "../context/plansContext";
 import Recommended from "../components/Recommended";
 
 type UserLocationState = {
@@ -17,6 +19,8 @@ type UserLocationState = {
 const Dashboard = () => {
     
     const { user } = useContext(UserContext)
+    const { setPlans } = useContext(PlansContext)
+
     const navigate = useNavigate()
 
     const [userLocation, setUserLocation] = useState<UserLocationState>(null)
@@ -44,8 +48,6 @@ const Dashboard = () => {
         toast.info("Enable location permissions for the best experience")
     }
 
-
-
     useEffect(() => {
         if (user?.accessToken == null) {
             // redirect to login page if user is not authorized
@@ -56,8 +58,18 @@ const Dashboard = () => {
             } else  {
                 toast.info("GeoLocation not supported on device");
             }
+            const getUserPlans = async () => {
+                if (user) {
+                    const getPlans = await fetchPlans(user)
+                    if (getPlans) {
+                        const planArr = [...getPlans.data.plans]
+                        setPlans(planArr)
+                    }
+                }
+            }
+            getUserPlans()
         }
-    }, [navigate, user?.accessToken])
+    }, [navigate, user?.accessToken, setPlans, user])
 
     return (
         <>

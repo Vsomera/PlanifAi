@@ -1,35 +1,19 @@
-import { fetchPlans } from "../services/planService"
-import { UserContext } from "../context/userContext"
 import { PlansContext } from "../context/plansContext"
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { AiOutlineDelete } from "react-icons/ai";
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { FiEdit2 } from "react-icons/fi";
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { SelectedPlanContext } from "../context/selectedPlanContext";
 import { Plan } from "../interfaces/plan";
 
 const MainDashboard = () => {
 
-    const { user } = useContext(UserContext)
-    const { plans, setPlans } = useContext(PlansContext)
+    const { plans } = useContext(PlansContext)
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
     const [dropDown, setDropDown] = useState(false)
-
-    useEffect(() => {
-        const getUserPlans = async () => {
-            if (user) {
-                const getPlans = await fetchPlans(user)
-                if (getPlans) {
-                    const planArr = [...getPlans.data.plans]
-                    setPlans(planArr)
-                }
-            }
-        }
-        getUserPlans()
-    }, [])
 
     const selectPlan = (plan : Plan) => {
         setSelectedPlan(plan)
