@@ -10,6 +10,7 @@ import { RiRestaurant2Line } from "react-icons/ri";
 import { TbBeach } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
 import { Plan } from "../interfaces/plan";
+import { fetchNearby } from "../api/travelAdv";
 
 const MainDashboard = () => {
 
@@ -21,6 +22,11 @@ const MainDashboard = () => {
     const selectPlan = (plan : Plan) => {
         setSelectedPlan(plan)
     }   
+
+    const handleNearby = async (fetchOption : number) => {
+        const test = await fetchNearby(-123.10, 49.24, 30, fetchOption)
+        console.log(test)
+    }
 
     return (
         <div
@@ -90,18 +96,27 @@ const MainDashboard = () => {
                                 style={{ border : "1px solid #006AFF"}} 
                                 className="p-3 bg-white rounded-md mt-6 h-1/2">
                                     <div className="flex w-full gap-x-2 overflow-x-auto">
-                                            <div className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
-                                                <RiRestaurant2Line />
-                                                <p className="ml-2">Restaurants</p>
+                                            <div 
+                                                onClick={() => handleNearby(0)}
+                                                className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
+                                                    <RiRestaurant2Line />
+                                                    <p className="ml-2">Restaurants</p>
                                             </div>
-                                            <div className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
-                                                <TbBeach />
-                                                <p className="ml-2">Attractions</p>
+                                            <div 
+                                                onClick={() => handleNearby(2)}
+                                                className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
+                                                    <TbBeach />
+                                                    <p className="ml-2">Attractions</p>
                                             </div>
-                                            <div className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
-                                                <MdOutlineHotel />
-                                                <p className="ml-2">Hotels</p>
+                                            <div 
+                                                onClick={() => handleNearby(1)}
+                                                className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
+                                                    <MdOutlineHotel />
+                                                    <p className="ml-2">Hotels</p>
                                             </div>
+                                    </div>
+                                    <div className="h-5/6 overflow-y-auto overflow-hidden mt-5">
+                                            
                                     </div>
                             </div> 
                             
