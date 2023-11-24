@@ -6,6 +6,9 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { FiEdit2 } from "react-icons/fi";
 import { useContext, useState } from "react"
 import { SelectedPlanContext } from "../context/selectedPlanContext";
+import { RiRestaurant2Line } from "react-icons/ri";
+import { TbBeach } from "react-icons/tb";
+import { MdOutlineHotel } from "react-icons/md";
 import { Plan } from "../interfaces/plan";
 
 const MainDashboard = () => {
@@ -86,7 +89,20 @@ const MainDashboard = () => {
                             <div
                                 style={{ border : "1px solid #006AFF"}} 
                                 className="p-3 bg-white rounded-md mt-6 h-1/2">
-                                    <p>Places Near Me</p>
+                                    <div className="flex w-full gap-x-2 overflow-x-auto">
+                                            <div className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
+                                                <RiRestaurant2Line />
+                                                <p className="ml-2">Restaurants</p>
+                                            </div>
+                                            <div className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
+                                                <TbBeach />
+                                                <p className="ml-2">Attractions</p>
+                                            </div>
+                                            <div className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
+                                                <MdOutlineHotel />
+                                                <p className="ml-2">Hotels</p>
+                                            </div>
+                                    </div>
                             </div> 
                             
                             <div className="flex justify-around items-center w-full h-1/2">

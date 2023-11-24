@@ -20,3 +20,6 @@ body {
 .onHover:hover {
   background-color: #f6f6f6;
 }
+.onHover2:hover {
+  background-color: rgb(235, 238, 241);
+}
