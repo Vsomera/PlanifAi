@@ -11,21 +11,70 @@ import { TbBeach } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
 import { Plan } from "../interfaces/plan";
 import { fetchNearby } from "../api/travelAdv";
+import { toast } from "react-toastify"
+import ReactLoading from "react-loading"
+import { Place } from "../interfaces/place";
+import { MarkerContext } from "../context/markerContext";
 
-const MainDashboard = () => {
+interface Props {
+    userLocation : {
+        latitude : number | null
+        longitude : number | null
+    } | null
+    flyToLocation: (longitude: number, latitude: number) => void;
+    resetView : () => void
+}
+
+const MainDashboard = (props : Props) => {
+
+    const categories = {
+        RESTAURANTS : "restaurants",
+        ATTRACTIONS : "attractions",
+        HOTELS : "hotels"
+    }
+
+    // map handling
+    const { flyToLocation } = props
+    const { resetView } = props
+
+    const { userLocation } = props
+    const latitude = userLocation?.latitude
+    const longitude = userLocation?.longitude
+
 
     const { plans } = useContext(PlansContext)
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
+    const [fetchedNearby, setFetchedNearby] = useState([])
+    const [isLoading, setLoading] = useState(false)
     const [dropDown, setDropDown] = useState(false)
+
+    const [selectedCategory, setCategory] = useState("")
+
+    const { setMarkers } = useContext(MarkerContext)
 
     const selectPlan = (plan : Plan) => {
         setSelectedPlan(plan)
     }   
 
     const handleNearby = async (fetchOption : number) => {
-        const test = await fetchNearby(-123.10, 49.24, 30, fetchOption)
-        console.log(test)
+        // fetch nearby places from user coordinates
+        if (typeof latitude === 'number' && typeof longitude === 'number') {
+            resetView()
+            setLoading(true)
+            const nearbyPlaces = await fetchNearby(longitude, latitude, 10, fetchOption)
+            setLoading(false)
+
+            const filteredPlaces = nearbyPlaces
+                .filter((place: Place) => place.name != null) 
+                .map((place: Place) => ({ ...place }))
+
+            setFetchedNearby(filteredPlaces)
+            setMarkers(filteredPlaces)
+
+        } else {
+            toast.warning("Please Allow Location in Browser")
+        }
     }
 
     return (
@@ -94,29 +143,102 @@ const MainDashboard = () => {
 
                             <div
                                 style={{ border : "1px solid #006AFF"}} 
-                                className="p-3 bg-white rounded-md mt-6 h-1/2">
-                                    <div className="flex w-full gap-x-2 overflow-x-auto">
+                                className="p-3 bg-white rounded-md mt-6 h-1/2 overflow-hidden">
+                                    <div className="flex w-full gap-x-2 overflow-hidden">
                                             <div 
-                                                onClick={() => handleNearby(0)}
+                                                onClick={() => (handleNearby(0), setCategory(categories.RESTAURANTS))}
                                                 className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
                                                     <RiRestaurant2Line />
                                                     <p className="ml-2">Restaurants</p>
                                             </div>
                                             <div 
-                                                onClick={() => handleNearby(2)}
+                                                onClick={() => (handleNearby(2), setCategory(categories.ATTRACTIONS))}
                                                 className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
                                                     <TbBeach />
                                                     <p className="ml-2">Attractions</p>
                                             </div>
                                             <div 
-                                                onClick={() => handleNearby(1)}
+                                                onClick={() => (handleNearby(1), setCategory(categories.HOTELS))}
                                                 className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
                                                     <MdOutlineHotel />
                                                     <p className="ml-2">Hotels</p>
                                             </div>
                                     </div>
-                                    <div className="h-5/6 overflow-y-auto overflow-hidden mt-5">
-                                            
+                                    <div className="h-5/6 overflow-y-auto mt-5">
+                                            {
+                                                isLoading 
+                                                    ? 
+                                                        <div className="flex w-full h-full">
+                                                            <ReactLoading 
+                                                                className="m-auto"
+                                                                type="spin" 
+                                                                height={"5rem"} 
+                                                                width={"5rem"} 
+                                                                color="#006AFF" />
+                                                        </div>
+                                                    :
+                                                        <div className="overflow-y-auto flex flex-col w-full">
+
+                                                            { fetchedNearby.length > 0 && 
+                                                                fetchedNearby.map((place : Place, index : number) => {
+                                                                        return (
+                                                                            <div 
+                                                                                onClick={() => flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude))}
+                                                                                key={place.location_id}
+                                                                                style={{ border : "1px solid #006AFF", height : "130px" }}
+                                                                                className={`onHover2 w-full rounded-md flex cursor-pointer ${index == 0 ? "" : "mt-2"}`}>
+                                                                                    <div className="w-1/3 flex items-center justify-center">
+                                                                                        { place.photo 
+                                                                                            ?
+                                                                                                <img 
+                                                                                                    style={{ borderRadius : "1rem "}}
+                                                                                                    className="w-full h-full p-2"
+                                                                                                    src={place.photo.images.original.url} 
+                                                                                                    alt="" />
+                                                                                            :   
+                                                                                                <div className="flex items-center justify-center p-2">                                                                                                
+                                                                                                    {
+                                                                                                        selectedCategory == categories.HOTELS 
+                                                                                                            ? <MdOutlineHotel size={50}/>
+                                                                                                                : selectedCategory == categories.RESTAURANTS
+                                                                                                                    ? <RiRestaurant2Line size={50}/> 
+                                                                                                                        : selectedCategory == categories.ATTRACTIONS
+                                                                                                                            && <TbBeach size={50}/>
+                                                                                                    }
+                                                                                                </div>
+                                                                                        }
+                                                                                    </div>
+                                                                                    <div className="w-2/3">
+
+                                                                                        <div className="p-2 flex justify-between items-center h-1/3">
+                                                                                            <h1 className={`font-black text-lg truncate ${ selectedCategory == categories.HOTELS ? "w-3/5" : "w-2/3"}`}>{place.name}</h1>
+                                                                                            <p style={{ color : "#006AFF"}} className="text-xs text-end">
+                                                                                                {
+                                                                                                    selectedCategory == categories.RESTAURANTS || categories.HOTELS ? place.price  : ""
+                                                                                                }
+                                                                                            </p>
+                                                                                        </div>
+
+                                                                                        <div className="p-2 h-2/3">
+                                                                                            <p style={{ color : "#006AFF", whiteSpace : "nowrap"}} className="text-sm">{place.location_string}</p>
+                                                                                            <p className="text-xs truncate">
+                                                                                                {   selectedCategory == categories.RESTAURANTS || categories.ATTRACTIONS ? place.address
+                                                                                                        : selectedCategory == categories.HOTELS && place.ranking
+                                                                                                }
+                                                                                            </p>
+                                                                                            <p className="text-xs">{place.ranking}</p>
+
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                            </div>
+                                                                        )
+                                                                })
+                                                            }
+                                                            
+                                                        </div>
+                                                    
+                                            }
                                     </div>
                             </div> 
                             

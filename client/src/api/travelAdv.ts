@@ -9,7 +9,8 @@ export const fetchNearby = async (
     ) => {
 
     // returns a list of restaurants, hotels, or attractions near given coordinates
-
+    
+    try {
     const boxCoords = calculateBoundingCoordinates(longitude, latitude, km) // box surrounding given location
     const { topRight, bottomLeft } = boxCoords
 
@@ -47,4 +48,7 @@ export const fetchNearby = async (
 
     const response = await axios.request(options)
     return response.data.data
+    } catch (err) {
+      console.log(err)
+    }
 }
