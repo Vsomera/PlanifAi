@@ -34,4 +34,5 @@ export interface Place {
         name : string
     }
     website : string // website url
+    web_url : string // tripadvisor url
 }
