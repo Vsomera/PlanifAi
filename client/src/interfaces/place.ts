@@ -13,7 +13,7 @@ export interface Place {
         }
     }
     location_string : string
-    rating : string
+    rating : string // 5.0
     booking : {
         provider : string // OpenTable
         url : string
@@ -32,4 +32,5 @@ export interface Place {
         key : string
         name : string
     }
+    website : string // website url
 }

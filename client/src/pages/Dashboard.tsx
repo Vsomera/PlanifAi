@@ -12,6 +12,9 @@ import { PlansContext } from "../context/plansContext";
 import Recommended from "../components/Recommended";
 import { MarkerContext } from "../context/markerContext";
 import { Place } from "../interfaces/place";
+import MarkerPopUp from "../components/MarkerPopUp";
+import { SelectedPlaceContext } from "../context/selectedPlaceContext";
+
 
 type UserLocationState = {
     latitude: number | null
@@ -23,6 +26,7 @@ const Dashboard = () => {
     const { user } = useContext(UserContext)
     const { setPlans } = useContext(PlansContext)
     const { markers } = useContext(MarkerContext)
+    const { selectedPlaceId, setPlaceId } = useContext(SelectedPlaceContext)
 
     const navigate = useNavigate()
 
@@ -144,16 +148,23 @@ const Dashboard = () => {
                                     { // show fetched places on map as markers
                                         markers.length > 0 && markers.map((place : Place) => {
                                             return (
-                                                <Marker                                            
+                                                <Marker    
+                                                    onClick={() => {
+                                                        flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude))
+                                                        setPlaceId(place.location_id)
+                                                    }}
                                                     key={place.location_id}
                                                     longitude={parseFloat(place.longitude)}
                                                     latitude={parseFloat(place.latitude)}
                                                     >
-                                                        <img 
-                                                            className="cursor-pointer w-5 h-5"
-                                                            src="https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png" 
-                                                            alt="" 
-                                                        />
+                                                        <div className="flex object-cover">
+                                                            <img 
+                                                                className="cursor-pointer w-5 h-5 object-cover z-10 text-yellow"
+                                                                src="https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png" 
+                                                                alt="" 
+                                                                />
+                                                                { selectedPlaceId == place.location_id && <MarkerPopUp place={place}/> }
+                                                        </div>
                                                 </Marker>
                                         )
                                     })
