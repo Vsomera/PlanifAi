@@ -16,3 +16,30 @@ body {
 .mapboxgl-ctrl-bottom-right {
   display: none;
 }
+
+.onHover:hover {
+  background-color: #f6f6f6;
+}
+.onHover2:hover {
+  background-color: rgb(235, 238, 241);
+}
+
+/* Style the scrollbar itself */
+::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  margin-left: 10px;
+  background: none; /* color of the tracking area */
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0.5rem;
+  background: #006AFF; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* color of the scroll thumb on hover */
+}
