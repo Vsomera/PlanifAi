@@ -12,6 +12,7 @@ export interface Place {
             }
         }
     }
+    hotel_class : string
     location_string : string
     rating : string // 5.0
     booking : {

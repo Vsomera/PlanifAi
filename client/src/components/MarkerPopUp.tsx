@@ -9,7 +9,7 @@ interface Props {
 
 const MarkerPopUp = (props : Props) => {
 
-    const { name, photo, price, description, rating, booking, website } = props.place
+    const { name, photo, price, description, rating, booking, website, hotel_class, ranking, web_url } = props.place
 
     return (
         <div 
@@ -34,6 +34,13 @@ const MarkerPopUp = (props : Props) => {
                         rel="noopener noreferrer"
                         href={booking.url}>Book with {booking.provider}</a>
                 } 
+                {web_url && 
+                    <a 
+                        className="underline text-cyan-800" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={web_url}>Review on Tripadvisor</a>
+                } 
                 {website && 
                     <a 
                         className="underline text-cyan-800" 
@@ -42,7 +49,10 @@ const MarkerPopUp = (props : Props) => {
                         href={website}>Website</a>
                 } 
                 <Rating className="mt-2" name="read-only" value={parseFloat(rating)} precision={0.5} readOnly />
-                <p className='mt-2'>{description}</p>
+                <p className='mt-2'>{ 
+                    hotel_class ? ranking 
+                        : description ? description 
+                            : ranking }</p>
             </div>
 
         </div>

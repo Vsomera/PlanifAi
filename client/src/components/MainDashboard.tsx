@@ -187,7 +187,8 @@ const MainDashboard = (props : Props) => {
                                                                             <div 
                                                                                 onClick={() => {(
                                                                                     flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude)), 
-                                                                                    setPlaceId(place.location_id)
+                                                                                    setPlaceId(place.location_id),
+                                                                                    console.log(place)
                                                                                     )
                                                                                 }}
                                                                                 key={place.location_id}
