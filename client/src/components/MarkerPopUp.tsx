@@ -1,6 +1,9 @@
 import '../index.css'
+import { useContext } from "react"
 import { Place } from '../interfaces/place'
+import { MdOutlineBookmarkAdd } from "react-icons/md";
 import Rating from '@mui/material/Rating';
+import { ModalContext } from '../context/modalContext';
 
 
 interface Props {
@@ -10,6 +13,7 @@ interface Props {
 const MarkerPopUp = (props : Props) => {
 
     const { name, photo, price, description, rating, booking, website, hotel_class, ranking, web_url } = props.place
+    const { showModal } = useContext(ModalContext)
 
     return (
         <div 
@@ -53,6 +57,15 @@ const MarkerPopUp = (props : Props) => {
                     hotel_class ? ranking 
                         : description ? description 
                             : ranking }</p>
+                <div className='flex items-center h-16'>
+                    <button     
+                        onClick={() => showModal(true)}
+                        style={{ border : "1px solid #006AFF", color : "#006AFF"}} 
+                        className='py-2 px-6 onHover tracking-widest rounded-lg flex items-center'>
+                            <MdOutlineBookmarkAdd style={{ height : "1rem", width : "1rem", marginRight : "3px"}} />
+                            <p className='ml-1 flex items-center'>Save to Itinerary</p>
+                    </button>
+                </div>
             </div>
 
         </div>

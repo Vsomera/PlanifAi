@@ -37,7 +37,7 @@ const MainDashboard = (props : Props) => {
     // map handling
     const { flyToLocation } = props
     const { resetView } = props
-    const { setPlaceId } = useContext(SelectedPlaceContext) // shows marker popup based on the selected place
+    const { setSelectedPlace } = useContext(SelectedPlaceContext) // shows marker popup based on the selected place
 
     const { userLocation } = props
     const latitude = userLocation?.latitude
@@ -148,19 +148,19 @@ const MainDashboard = (props : Props) => {
                                 className="p-3 bg-white rounded-md mt-6 h-1/2 overflow-hidden">
                                     <div className="flex w-full gap-x-2 overflow-hidden">
                                             <div 
-                                                onClick={() => (handleNearby(0), setCategory(categories.RESTAURANTS), setPlaceId(""))}
+                                                onClick={() => (handleNearby(0), setCategory(categories.RESTAURANTS), setSelectedPlace(null))}
                                                 className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
                                                     <RiRestaurant2Line />
                                                     <p className="ml-2">Restaurants</p>
                                             </div>
                                             <div 
-                                                onClick={() => (handleNearby(2), setCategory(categories.ATTRACTIONS), setPlaceId(""))}
+                                                onClick={() => (handleNearby(2), setCategory(categories.ATTRACTIONS), setSelectedPlace(null))}
                                                 className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
                                                     <TbBeach />
                                                     <p className="ml-2">Attractions</p>
                                             </div>
                                             <div 
-                                                onClick={() => (handleNearby(1), setCategory(categories.HOTELS), setPlaceId(""))}
+                                                onClick={() => (handleNearby(1), setCategory(categories.HOTELS), setSelectedPlace(null))}
                                                 className="onHover2 grow p-2 bg-slate-100 rounded-xl cursor-pointer flex justify-center items-center">
                                                     <MdOutlineHotel />
                                                     <p className="ml-2">Hotels</p>
@@ -187,7 +187,7 @@ const MainDashboard = (props : Props) => {
                                                                             <div 
                                                                                 onClick={() => {(
                                                                                     flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude)), 
-                                                                                    setPlaceId(place.location_id),
+                                                                                    setSelectedPlace(place),
                                                                                     console.log(place)
                                                                                     )
                                                                                 }}

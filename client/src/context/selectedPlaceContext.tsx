@@ -1,13 +1,14 @@
 import React, { createContext, useState, ReactNode } from 'react'
+import { Place } from '../interfaces/place';
 
 interface selectedPlaceContextType {
-    selectedPlaceId : string
-    setPlaceId : React.Dispatch<React.SetStateAction<string>>
+    selectedPlace : Place | null
+    setSelectedPlace : React.Dispatch<React.SetStateAction<Place | null>>
 }
 
 export const SelectedPlaceContext = createContext<selectedPlaceContextType>({
-    selectedPlaceId : "",
-    setPlaceId : () => {}
+    selectedPlace : null,
+    setSelectedPlace : () => {}
 })
 
 interface Props {
@@ -15,9 +16,9 @@ interface Props {
 }
 
 export const SelectedPlaceContextProvider : React.FC<Props> = ({children}) => {
-    const [selectedPlaceId, setPlaceId] = useState("")
+    const [selectedPlace, setSelectedPlace] = useState<Place | null >(null)
     return (
-        <SelectedPlaceContext.Provider value={{ selectedPlaceId, setPlaceId }}>
+        <SelectedPlaceContext.Provider value={{ selectedPlace, setSelectedPlace }}>
             {children}
         </SelectedPlaceContext.Provider>
     )
