@@ -1,6 +1,10 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify"
 import { SavedPlace } from "../interfaces/place"
+
+interface ApiErrorResponse {
+    error: string
+}
 
 export const fetchPlans = async (user : { accessToken : string }) => {
     try {
@@ -25,7 +29,13 @@ export const savePlaceToPlan = async (user : { accessToken : string }, selectedP
         }) 
         return addPlace
     } catch (err) {
-        console.log(err)
-        toast.error("An error occurred saving place to plan")
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse;
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
     }
 }

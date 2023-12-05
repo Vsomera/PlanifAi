@@ -176,6 +176,17 @@ const addPlaceToPlan = async (req: Request, res: Response) => {
                 error: "User not Authorized"
             });
         }
+
+        const plan = await Plan.findOne({ _id: plan_id, user_id: user?._id });
+        if (!plan) {
+            return res.status(404).json({ error: "Plan not found" });
+        }
+
+        const isPlaceInItinerary = plan.itinerary.some(p => p.location_id === place.location_id);
+        if (isPlaceInItinerary) {
+            return res.status(409).json({ error: "Place already in the itinerary" });
+        }
+
         const addPlace = await Plan.findOneAndUpdate(
             {
                 _id: plan_id,
