@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { ModalContext } from "../context/modalContext"
 import { SelectedPlaceContext } from "../context/selectedPlaceContext"
 import { FiEdit2 } from "react-icons/fi";
@@ -22,22 +22,18 @@ const Modal = () => {
     const { user } = useContext(UserContext)
     const { showModal } = useContext(ModalContext)
     const { selectedPlace } = useContext(SelectedPlaceContext)
-    const { plans } = useContext(PlansContext)
+    const { plans, setPlans } = useContext(PlansContext)
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
     const [dropDown, setDropDown] = useState(false)
     const [dateVal, setDateVal] = React.useState<Dayjs | null>(dayjs('2022-04-17'))
-
-    useEffect(() => {
-        console.log(dateVal)
-    }, [dateVal])
 
     const handleBackdropClick = (event : React.MouseEvent) => {
         // closes the modal if user clicks outside the modal
         if (event.currentTarget === event.target) {
             showModal(false);
         }
-    };
+    }
 
     const handleSavePlace = async () => {
         // adds selected place to selected itinerary in database
@@ -47,10 +43,27 @@ const Modal = () => {
         if (!dateVal) {
             return toast.warning("Date is required");
         }
-        console.log(selectedPlace)
         const savedPlace: SavedPlace = {...selectedPlace, date: dateVal, location_id: selectedPlace.location_id }
-        await savePlaceToPlan(user, selectedPlan._id, savedPlace)
-        showModal(false)
+        try {
+            const savePlaceResponse = await savePlaceToPlan(user, selectedPlan._id, savedPlace);
+            if (savePlaceResponse?.status == 201) {
+                // updated plan context, adding saved place to itinerary
+                const updatedPlans = plans.map((plan) => {
+                    if (plan._id == selectedPlan._id) {
+                        return {...plan, itinerary: [...plan.itinerary, savedPlace]}
+                    }
+                    return plan
+                })
+                // update context states
+                setPlans(updatedPlans)
+                setSelectedPlan({_id : selectedPlan._id, user_id : selectedPlan.user_id, plan_name : selectedPlan.plan_name, itinerary: [...selectedPlan.itinerary, savedPlace]})
+            }
+            showModal(false);
+        } catch (error) {
+            // Handle errors here
+            console.error(error);
+            toast.error("An error occurred while saving the place");
+        }
     }
     
 
