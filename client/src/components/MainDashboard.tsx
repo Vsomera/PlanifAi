@@ -9,7 +9,6 @@ import { SelectedPlanContext } from "../context/selectedPlanContext";
 import { RiRestaurant2Line } from "react-icons/ri";
 import { TbBeach } from "react-icons/tb";
 import { MdOutlineHotel } from "react-icons/md";
-import { Plan } from "../interfaces/plan";
 import { fetchNearby } from "../api/travelAdv";
 import { toast } from "react-toastify"
 import ReactLoading from "react-loading"
@@ -55,10 +54,6 @@ const MainDashboard = (props : Props) => {
 
     const { setMarkers } = useContext(MarkerContext)
 
-    const selectPlan = (plan : Plan) => {
-        setSelectedPlan(plan)
-    }   
-
     const handleNearby = async (fetchOption : number) => {
         // fetch nearby places from user coordinates
         if (typeof latitude === 'number' && typeof longitude === 'number') {
@@ -98,7 +93,7 @@ const MainDashboard = (props : Props) => {
                                         <div 
                                             onClick={() => setDropDown(!dropDown)}
                                             className="p-3 flex justify-between">
-                                                <p>Select a Plan</p>
+                                                <p>{ selectedPlan ? `${selectedPlan.plan_name}`: "Select a Plan"}</p>
                                                 { dropDown 
                                                     ?
                                                     <IoIosArrowUp 
@@ -128,7 +123,7 @@ const MainDashboard = (props : Props) => {
                                                             return (
                                                                 <div 
                                                                     key={plan._id}
-                                                                    onClick={() => selectPlan(plan)}
+                                                                    onClick={() => (setSelectedPlan(plan), setDropDown(false))}
                                                                     className="onHover bg-white flex justify-between p-4 text-left rounded-md">
                                                                     <h1>{plan.plan_name}</h1>
                                                                     <div className="flex w-12 items-center justify-between">
@@ -263,7 +258,7 @@ const MainDashboard = (props : Props) => {
                                                 selectedPlan?.itinerary && selectedPlan.itinerary.length > 0
                                                     ? selectedPlan.itinerary.map((place) => (
                                                         <h1 key={place.location_id}>
-                                                            {place.location_name}
+                                                            {place.name}
                                                         </h1> 
                                                     ))
                                                     : <p>No places in itinerary</p> // placeholder for now

@@ -12,15 +12,42 @@ export interface planSchema {
     itinerary : [
         {
             location_id : string
-            location_name : string
-            lat : number
-            long : number
-            photoUrl? : string
-            rating? : number // eg. 5.0, 4.5 
-            ranking? : string
-            price? : string // eg. $23 - $45
-            is_closed : boolean
-            date : Date // set by user
+            name : string
+            longitude : string // convert to number
+            latitude : string // convert to number
+            address : string
+            description : string
+            photo : {
+                images : {
+                    original : {
+                        url : string // photo URL
+                    }
+                }
+            }
+            hotel_class : string
+            location_string : string
+            rating : string // 5.0
+            booking : {
+                provider : string // OpenTable
+                url : string
+            }
+            price : string // "CA$15 - CA$258"
+            price_level : string // "$$$$"
+            address_obj : {
+                city : string
+                country : string
+                state : string | null
+                street1 : string
+                street2 : string
+            }
+            ranking : string
+            category : { // restaurant, hotel, attraction...
+                key : string
+                name : string
+            }
+            website : string // website url
+            web_url : string // tripadvisor url
+            date : Date
         }
     ]
 }
