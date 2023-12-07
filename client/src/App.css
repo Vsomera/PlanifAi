@@ -27,7 +27,7 @@
     height: 40px;
     color: black;
     padding: 0 10px;
-    border-bottom: 0.5px solid black;
+    border-bottom: 0.5px solid;
 }
 
 .input-container input:focus~label,

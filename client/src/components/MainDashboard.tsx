@@ -17,6 +17,9 @@ import { SelectedPlaceContext } from "../context/selectedPlaceContext";
 import { PlacesForDateContext } from '../context/placesForDateContext';
 import Cal from "./Cal";
 import dayjs from "dayjs";
+import { IoCheckmarkDoneSharp } from "react-icons/io5";
+import { motion } from "framer-motion"
+
 
 interface Props {
     userLocation : {
@@ -44,6 +47,7 @@ const MainDashboard = (props : Props) => {
     const latitude = userLocation?.latitude
     const longitude = userLocation?.longitude
 
+    const [showCreateModal, setCreateModal] = useState(false) // showing create plan modal
 
     const { plans } = useContext(PlansContext)
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
@@ -56,6 +60,7 @@ const MainDashboard = (props : Props) => {
     const { placesForDate } = useContext(PlacesForDateContext)
 
     const [selectedCategory, setCategory] = useState("")
+    const [changedPlanName, setChangedPlanName] = useState("")
 
     const { setMarkers } = useContext(MarkerContext)
 
@@ -77,6 +82,11 @@ const MainDashboard = (props : Props) => {
         } else {
             toast.warning("Please Allow Location in Browser")
         }
+    }
+
+    const handleSaveNewPlan = (e : Event) => {
+        e.stopPropagation()
+        setCreateModal(false)
     }
 
     return (
@@ -117,10 +127,50 @@ const MainDashboard = (props : Props) => {
                                         
                                             { dropDown &&
                                                 <div className="w-full absolute z-10 mt-2 rounded-lg shadow-lg">
+
                                                     <div 
+                                                        onClick={() => setCreateModal(true)}
                                                         style={{ border : "1px dashed #006AFF", color : "#006AFF"}}
-                                                        className="bg-white onHover flex justify-between p-3 text-left rounded-md">
+                                                        className="bg-white onHover flex justify-between p-3 text-left rounded-md relative">
                                                         <h1>Create New Plan</h1>
+
+                                                        <div>
+                                                            <motion.div 
+                                                                style={{ position : "fixed" }}
+                                                                initial={{
+                                                                    opacity: showCreateModal ? 0 : 1,
+                                                                    y: -20,
+                                                                }}
+                                                                animate={{
+                                                                    x: showCreateModal ? [100, 40] : [40, 100],
+                                                                    opacity: showCreateModal ? 1 : 0
+                                                                }}
+                                                                transition={{
+                                                                    duration: showCreateModal ? 0.3 : 0
+                                                                }}
+                                                                >
+                                                                    <div 
+                                                                        style={{ backgroundColor : "#333333"}}
+                                                                        className="z-50 w-96 h-42 rounded-md shadow-md flex">
+                                                                        <div className="m-auto flex justify-around w-11/12">
+                                                                            <div className="input-container w-full">
+                                                                                <input 
+                                                                                    style={{ backgroundColor : "#333333", color : "white" }}
+                                                                                    className="outline-none w-full auth-input"
+                                                                                    type="text" required/>
+                                                                                <label 
+                                                                                    style={{ backgroundColor : "transparent", color : "white"}}
+                                                                                    htmlFor="">Plan Name</label>
+                                                                            </div>
+                                                                            <div className="flex items-center justify-centers">
+                                                                                <button onClick={(e : Event) => handleSaveNewPlan(e)}>
+                                                                                    <IoCheckmarkDoneSharp style={{ color : "green"}}/>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                            </motion.div>
+                                                        </div>
                                                     </div>
 
                                                     {plans && 
@@ -181,7 +231,7 @@ const MainDashboard = (props : Props) => {
                                                     :
                                                         <div className="overflow-y-auto flex flex-col w-full">
 
-                                                            { fetchedNearby.length > 0 && 
+                                                            { fetchedNearby.length > 0 ? 
                                                                 fetchedNearby.map((place : Place, index : number) => {
                                                                         return (
                                                                             <div 
@@ -241,6 +291,46 @@ const MainDashboard = (props : Props) => {
                                                                             </div>
                                                                         )
                                                                 })
+
+                                                                : // placeholder
+                                                                    <>
+                                                                        <div 
+                                                                            style={{ border : "1px solid #006AFF", height : "110px" }}
+                                                                            className={`w-full rounded-md flex shadow-md`}>
+                                                                                <div className="w-full flex items-center">
+                                                                                    <div className="p-2 h-2/3 w-full">
+                                                                                        <p className="w-5/6 h-2 bg-slate-100 rounded-md" />
+                                                                                        <p className="w-4/6 mt-2 h-2 bg-slate-100 rounded-md" />
+                                                                                        <p className="w-2/6 mt-2 h-2 bg-slate-100 rounded-md" />
+                                                                                    </div>
+                                                                                </div>
+                                                                        </div>
+
+                                                                        <div 
+                                                                            style={{ border : "1px solid #006AFF", height : "110px" }}
+                                                                            className={`w-full rounded-md flex mt-2 shadow-md`}>
+                                                                                <div className="w-full flex items-center">
+                                                                                    <div className="p-2 h-2/3 w-full">
+                                                                                        <p className="w-5/6 h-2 bg-slate-100 rounded-md" />
+                                                                                        <p className="w-4/6 mt-2 h-2 bg-slate-100 rounded-md" />
+                                                                                        <p className="w-2/6 mt-2 h-2 bg-slate-100 rounded-md" />
+                                                                                    </div>
+                                                                                </div>
+                                                                        </div>
+
+                                                                        <div 
+                                                                            style={{ border : "1px solid #006AFF", height : "110px" }}
+                                                                            className={`w-full rounded-md flex mt-2 shadow-md`}>
+                                                                                <div className="w-full flex items-center">
+                                                                                    <div className="p-2 h-2/3 w-full">
+                                                                                        <p className="w-5/6 h-2 bg-slate-100 rounded-md" />
+                                                                                        <p className="w-4/6 mt-2 h-2 bg-slate-100 rounded-md" />
+                                                                                        <p className="w-2/6 mt-2 h-2 bg-slate-100 rounded-md" />
+                                                                                    </div>
+                                                                                </div>
+                                                                        </div>
+                                                                        
+                                                                    </>
                                                             }
                                                             
                                                         </div>
@@ -296,8 +386,8 @@ const MainDashboard = (props : Props) => {
                                                                     className="rounded-xl shadow-md relative mt-2 h-24 flex cursor-pointer">
                                                                         <div className="absolute text-white z-50 w-full h-full flex justify-center">
                                                                             <div className="w-11/12 flex flex-col justify-center">
-                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-1/6 rounded-md"/>
-                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-1/6 rounded-md mt-2"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-2 rounded-md"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-2 rounded-md mt-2"/>
                                                                             </div>
                                                                         </div>
                                                                 </div>                                    
@@ -306,8 +396,8 @@ const MainDashboard = (props : Props) => {
                                                                     className="rounded-xl shadow-md relative mt-2 h-24 flex cursor-pointer">
                                                                         <div className="absolute text-white z-50 w-full h-full flex justify-center">
                                                                             <div className="w-11/12 flex flex-col justify-center">
-                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-1/6 rounded-md"/>
-                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-1/6 rounded-md mt-2"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-2 rounded-md"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-2 rounded-md mt-2"/>
                                                                             </div>
                                                                         </div>
                                                                 </div>                                    
@@ -316,8 +406,8 @@ const MainDashboard = (props : Props) => {
                                                                     className="rounded-xl shadow-md relative mt-2 h-24 flex cursor-pointer">
                                                                         <div className="absolute text-white z-50 w-full h-full flex justify-center">
                                                                             <div className="w-11/12 flex flex-col justify-center">
-                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-1/6 rounded-md"/>
-                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-1/6 rounded-md mt-2"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-2 rounded-md"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-2 rounded-md mt-2"/>
                                                                             </div>
                                                                         </div>
                                                                 </div>
