@@ -5,7 +5,6 @@ import { MdOutlineBookmarkAdd } from "react-icons/md";
 import Rating from '@mui/material/Rating';
 import { ModalContext } from '../context/modalContext';
 
-
 interface Props {
     place : Place
 }

@@ -1,11 +1,11 @@
 import React, { createContext, useState, ReactNode } from 'react'
 
-interface MarkerContextType {
+interface ModalContextType {
     modal : boolean
     showModal :  React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ModalContext = createContext<MarkerContextType>({
+export const ModalContext = createContext<ModalContextType>({
     modal : false,
     showModal : () => {}
 })

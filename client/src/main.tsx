@@ -13,24 +13,27 @@ import { SelectedPlaceContextProvider } from "./context/selectedPlaceContext.tsx
 import { ModalContextProvider } from './context/modalContext.tsx';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { PlacesForDateContextProvider } from './context/placesForDateContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ModalContextProvider>
-        <SelectedPlaceContextProvider>
-          <MarkerContextProvider>
-            <SelectedPlanContextProvider>
-              <PlanContextProvider>
-                <UserContextProvider>
-                  <App />
-                  <ToastContainer theme='colored' />
-                </UserContextProvider>
-              </PlanContextProvider>
-            </SelectedPlanContextProvider>
-          </MarkerContextProvider>
-        </SelectedPlaceContextProvider>
-      </ModalContextProvider>
+      <PlacesForDateContextProvider>
+        <ModalContextProvider>
+          <SelectedPlaceContextProvider>
+            <MarkerContextProvider>
+              <SelectedPlanContextProvider>
+                <PlanContextProvider>
+                  <UserContextProvider>
+                    <App />
+                    <ToastContainer theme='colored' />
+                  </UserContextProvider>
+                </PlanContextProvider>
+              </SelectedPlanContextProvider>
+            </MarkerContextProvider>
+          </SelectedPlaceContextProvider>
+        </ModalContextProvider>
+      </PlacesForDateContextProvider>
     </LocalizationProvider>
   </React.StrictMode>,
 )

@@ -26,7 +26,7 @@ const Modal = () => {
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
     const [dropDown, setDropDown] = useState(false)
-    const [dateVal, setDateVal] = React.useState<Dayjs | null>(dayjs('2022-04-17'))
+    const [dateVal, setDateVal] = React.useState<Dayjs | null>(dayjs(new Date()))
 
     const handleBackdropClick = (event : React.MouseEvent) => {
         // closes the modal if user clicks outside the modal

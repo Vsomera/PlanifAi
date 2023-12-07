@@ -2,7 +2,6 @@ import { PlansContext } from "../context/plansContext"
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { AiOutlineDelete } from "react-icons/ai";
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { FiEdit2 } from "react-icons/fi";
 import { useContext, useState } from "react"
 import { SelectedPlanContext } from "../context/selectedPlanContext";
@@ -15,6 +14,9 @@ import ReactLoading from "react-loading"
 import { Place } from "../interfaces/place";
 import { MarkerContext } from "../context/markerContext";
 import { SelectedPlaceContext } from "../context/selectedPlaceContext";
+import { PlacesForDateContext } from '../context/placesForDateContext';
+import Cal from "./Cal";
+import dayjs from "dayjs";
 
 interface Props {
     userLocation : {
@@ -49,6 +51,9 @@ const MainDashboard = (props : Props) => {
     const [fetchedNearby, setFetchedNearby] = useState([])
     const [isLoading, setLoading] = useState(false)
     const [dropDown, setDropDown] = useState(false)
+
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+    const { placesForDate } = useContext(PlacesForDateContext)
 
     const [selectedCategory, setCategory] = useState("")
 
@@ -246,26 +251,82 @@ const MainDashboard = (props : Props) => {
                             
                             <div className="flex justify-around items-center w-full h-1/2">
                                 
-                                    <div className="w-1/2">
-                                        <DateCalendar 
-                                            showDaysOutsideCurrentMonth 
-                                            fixedWeekNumber={6} />
+                                    <div className="w-1/2 h-full flex">
+                                        <div className="w-full my-auto">
+                                            <Cal setSelectedDate={setSelectedDate} selectedDate={selectedDate}/>
+                                        </div>
                                     </div>
 
-                                    <div className="w-1/2">
-                                    <h1 className="text-xl text-center">
-                                            {
-                                                selectedPlan?.itinerary && selectedPlan.itinerary.length > 0
-                                                    ? selectedPlan.itinerary.map((place) => (
-                                                        <h1 key={place.location_id}>
-                                                            {place.name}
-                                                        </h1> 
-                                                    ))
-                                                    : <p>No places in itinerary</p> // placeholder for now
-                                            }
-                                        </h1>
-                                    </div>
+                                    <div className="w-1/2 h-full flex">
+                                        <div className="text-xl w-full my-auto">
+                                            <p className="p-4 text-center text-sm">Plan for :   
+                                                <a style={{ color : "#006AFF"}} className="ml-2">
+                                                    { dayjs(selectedDate).format("MM-DD-YYYY") }
+                                                </a>
+                                            </p>
+                                            <div className="overflow-y-auto h-80">
+                                                {
+                                                    placesForDate && placesForDate.length > 0
+                                                        ? placesForDate.map((place) => (
+                                                            <div 
+                                                                onClick={() => flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude))}                                                               
+                                                                key={place.location_id} 
+                                                                className=" rounded-xl shadow-md relative onHover mt-2 h-24 flex cursor-pointer">
+                                                                    <img 
+                                                                        className="w-full h-full object-cover"
+                                                                        style={{ borderRadius : "0.5rem"}}
+                                                                        src={place.photo.images.original.url} 
+                                                                        alt="" />
+                                                                    <div 
+                                                                        // gradient overlay for image
+                                                                        style={{ borderRadius : "0.5rem"}}
+                                                                        className="gradient-overlay absolute inset-0" />
+                                                                    <div className="absolute text-white z-50 w-full h-full flex justify-center">
+                                                                        <div className="w-11/12 flex flex-col justify-center">
+                                                                            <p>{place.name}</p> 
+                                                                            <p className="text-xs font-thin">{place.address}</p>
+                                                                        </div>
+                                                                    </div>
+                                                            </div>
+                                                        ))
+                                                        : // show placeholder
+                                                            <>                                     
+                                                                <div 
+                                                                    style={{ border: "1px solid #eee"}}
+                                                                    className="rounded-xl shadow-md relative mt-2 h-24 flex cursor-pointer">
+                                                                        <div className="absolute text-white z-50 w-full h-full flex justify-center">
+                                                                            <div className="w-11/12 flex flex-col justify-center">
+                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-1/6 rounded-md"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-1/6 rounded-md mt-2"/>
+                                                                            </div>
+                                                                        </div>
+                                                                </div>                                    
+                                                                <div 
+                                                                    style={{ border: "1px solid #eee"}}
+                                                                    className="rounded-xl shadow-md relative mt-2 h-24 flex cursor-pointer">
+                                                                        <div className="absolute text-white z-50 w-full h-full flex justify-center">
+                                                                            <div className="w-11/12 flex flex-col justify-center">
+                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-1/6 rounded-md"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-1/6 rounded-md mt-2"/>
+                                                                            </div>
+                                                                        </div>
+                                                                </div>                                    
+                                                                <div 
+                                                                    style={{ border: "1px solid #eee"}}
+                                                                    className="rounded-xl shadow-md relative mt-2 h-24 flex cursor-pointer">
+                                                                        <div className="absolute text-white z-50 w-full h-full flex justify-center">
+                                                                            <div className="w-11/12 flex flex-col justify-center">
+                                                                                <p className="text-xs font-thin bg-slate-100 w-4/5 h-1/6 rounded-md"/>
+                                                                                <p className="text-xs font-thin bg-slate-100 w-2/4 h-1/6 rounded-md mt-2"/>
+                                                                            </div>
+                                                                        </div>
+                                                                </div>
+                                                            </>
+                                                }
+                                            </div>
 
+                                        </div>
+                                    </div>
                             </div>
 
                     </div>

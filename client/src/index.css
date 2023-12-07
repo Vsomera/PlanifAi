@@ -52,11 +52,22 @@ body {
 .MuiPickersLayout-root {
   background-color: #333333 !important;
 }
+
+main .MuiPickersLayout-root {
+  background-color: white !important;
+}
 .modal .MuiTypography-root, 
 .modal .MuiButtonBase-root {
   color: white !important;
-  font-family: "Poppins", sans-serif;
 }
-.MuiDialogActions-root button {
+.MuiDialogActions-root button, 
+main .MuiPickersToolbar-root  {
   display: none;
+}
+
+.MuiTypography-root, 
+.MuiButtonBase-root, 
+.MuiPickersLayout-root, 
+.MuiPickersCalendarHeader-label {
+  font-family: "Poppins", sans-serif !important;
 }
