@@ -58,23 +58,25 @@ const MainDashboard = (props : Props) => {
 
     const [showCreateModal, setCreateModal] = useState(false) // showing create plan modal
 
-    const { plans, setPlans } = useContext(PlansContext)
+    const { plans, setPlans } = useContext(PlansContext) // array of plans made by the user in the database
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
-    const [fetchedNearby, setFetchedNearby] = useState([])
+    const [fetchedNearby, setFetchedNearby] = useState([]) // array of places object to be shown on dashboard
     const [isLoading, setLoading] = useState(false)
     const [dropDown, setDropDown] = useState(false)
 
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-    const { placesForDate } = useContext(PlacesForDateContext)
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date()) // date selected on the calendar
+    const { placesForDate } = useContext(PlacesForDateContext) // array of place objects from the selected date
 
     const [selectedCategory, setCategory] = useState("")
 
-    const [planName, setPlanName] = useState("")
+    const [planName, setPlanName] = useState("") // for creating new plans
     const [planToEdit, setPlanToEdit] = useState("") // holds plan id to edit
     const [newPlanName, setNewPlanName] = useState("") // state for holding the new plan name
 
-    const { setMarkers } = useContext(MarkerContext)
+    const { setMarkers } = useContext(MarkerContext) // for setting map markers (basically and array of place objects)
+
+    const [nearbyOrMap, toggleNearbyOrMap] = useState(false)
 
     const handleNearby = async (fetchOption : number) => {
         // fetch nearby places from user coordinates
