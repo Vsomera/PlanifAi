@@ -3,7 +3,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit2 } from "react-icons/fi";
-import { useContext, useState } from "react"
+import { useContext, useState, useRef, useEffect } from "react"
 import { SelectedPlanContext } from "../context/selectedPlanContext";
 import { RiRestaurant2Line } from "react-icons/ri";
 import { TbBeach } from "react-icons/tb";
@@ -19,6 +19,10 @@ import Cal from "./Cal";
 import dayjs from "dayjs";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { motion } from "framer-motion"
+import { createPlan } from "../services/planService";
+import { UserContext } from "../context/userContext";
+import { IoCloseCircleOutline } from "react-icons/io5";
+
 
 
 interface Props {
@@ -43,13 +47,17 @@ const MainDashboard = (props : Props) => {
     const { resetView } = props
     const { setSelectedPlace } = useContext(SelectedPlaceContext) // shows marker popup based on the selected place
 
+    const { user } = useContext(UserContext)
+
+    const createModalRef = useRef<HTMLDivElement>(null);
+
     const { userLocation } = props
     const latitude = userLocation?.latitude
     const longitude = userLocation?.longitude
 
     const [showCreateModal, setCreateModal] = useState(false) // showing create plan modal
 
-    const { plans } = useContext(PlansContext)
+    const { plans, setPlans } = useContext(PlansContext)
     const { selectedPlan, setSelectedPlan } = useContext(SelectedPlanContext)
 
     const [fetchedNearby, setFetchedNearby] = useState([])
@@ -84,10 +92,40 @@ const MainDashboard = (props : Props) => {
         }
     }
 
-    const handleSaveNewPlan = (e : Event) => {
+    const handleSaveNewPlan = async (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
         setCreateModal(false)
+        if (user && changedPlanName !== "") {
+            const newPlan = await createPlan(user, changedPlanName)
+            if (newPlan?.status == 201) {
+                toast.success("New Plan Added")
+                setPlans([...plans, {
+                    _id : newPlan.data.plan_id,
+                    user_id : user.accessToken,
+                    plan_name : changedPlanName,
+                    itinerary : []
+                }])
+            }
+        }
+        setChangedPlanName("")
     }
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            // close create plan modal if user clicks outside the modal
+            const target = event.target as Node;
+    
+            if (createModalRef.current && !createModalRef.current.contains(target)) {
+                setCreateModal(false);
+                setChangedPlanName("")
+            }
+        }
+    
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [createModalRef]);
 
     return (
         <div
@@ -106,7 +144,7 @@ const MainDashboard = (props : Props) => {
                                     style={{ border : "1px solid #006AFF"}} 
                                     className="w-7/12 bg-white rounded-md relative">
                                         <div 
-                                            onClick={() => setDropDown(!dropDown)}
+                                            onClick={() => (setDropDown(!dropDown), setCreateModal(false))}
                                             className="p-3 flex justify-between">
                                                 <p>{ selectedPlan ? `${selectedPlan.plan_name}`: "Select a Plan"}</p>
                                                 { dropDown 
@@ -136,6 +174,7 @@ const MainDashboard = (props : Props) => {
 
                                                         <div>
                                                             <motion.div 
+                                                                ref={createModalRef}
                                                                 style={{ position : "fixed" }}
                                                                 initial={{
                                                                     opacity: showCreateModal ? 0 : 1,
@@ -155,6 +194,8 @@ const MainDashboard = (props : Props) => {
                                                                         <div className="m-auto flex justify-around w-11/12">
                                                                             <div className="input-container w-full">
                                                                                 <input 
+                                                                                    value={changedPlanName}
+                                                                                    onChange={(e) => setChangedPlanName(e.target.value)}
                                                                                     style={{ backgroundColor : "#333333", color : "white" }}
                                                                                     className="outline-none w-full auth-input"
                                                                                     type="text" required/>
@@ -163,8 +204,12 @@ const MainDashboard = (props : Props) => {
                                                                                     htmlFor="">Plan Name</label>
                                                                             </div>
                                                                             <div className="flex items-center justify-centers">
-                                                                                <button onClick={(e : Event) => handleSaveNewPlan(e)}>
-                                                                                    <IoCheckmarkDoneSharp style={{ color : "green"}}/>
+                                                                                <button onClick={(e) => handleSaveNewPlan(e)}>
+                                                                                    {
+                                                                                        changedPlanName !== "" 
+                                                                                            ? <IoCheckmarkDoneSharp style={{ color : "green"}} className="w-6 h-6"/>
+                                                                                            : <IoCloseCircleOutline  style={{ color : "white"}} className="w-6 h-6"/>
+                                                                                    }
                                                                                 </button>
                                                                             </div>
                                                                         </div>
