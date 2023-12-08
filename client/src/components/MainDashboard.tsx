@@ -22,6 +22,7 @@ import { motion } from "framer-motion"
 import { createPlan } from "../services/planService";
 import { UserContext } from "../context/userContext";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { editPlanName } from "../services/planService";
 
 
 
@@ -68,7 +69,10 @@ const MainDashboard = (props : Props) => {
     const { placesForDate } = useContext(PlacesForDateContext)
 
     const [selectedCategory, setCategory] = useState("")
-    const [changedPlanName, setChangedPlanName] = useState("")
+
+    const [planName, setPlanName] = useState("")
+    const [planToEdit, setPlanToEdit] = useState("") // holds plan id to edit
+    const [newPlanName, setNewPlanName] = useState("") // state for holding the new plan name
 
     const { setMarkers } = useContext(MarkerContext)
 
@@ -95,29 +99,50 @@ const MainDashboard = (props : Props) => {
     const handleSaveNewPlan = async (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
         setCreateModal(false)
-        if (user && changedPlanName !== "") {
-            const newPlan = await createPlan(user, changedPlanName)
+        if (user && planName !== "") {
+            const newPlan = await createPlan(user, planName)
             if (newPlan?.status == 201) {
                 toast.success("New Plan Added")
                 setPlans([...plans, {
                     _id : newPlan.data.plan_id,
                     user_id : user.accessToken,
-                    plan_name : changedPlanName,
+                    plan_name : planName,
                     itinerary : []
                 }])
             }
         }
-        setChangedPlanName("")
+        setPlanName("")
+    }
+
+    const handleEditPlan = async (plan_id : string , e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation()
+        if (user) {
+            const editPlan = await editPlanName(user, newPlanName, plan_id)
+            if (editPlan?.status == 200) {
+                const updatedPlans = plans.map(plan => {
+                    if (plan._id === plan_id) {
+                        return { ...plan, plan_name: newPlanName };
+                    }
+                    return plan
+                })
+                setPlans(updatedPlans)
+                setPlanToEdit("")
+                setNewPlanName("")
+                toast.success("Plan name updated successfully");
+            } else {
+                toast.error("Failed to update plan name");
+            }
+        }
+        setPlanToEdit("")
     }
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             // close create plan modal if user clicks outside the modal
-            const target = event.target as Node;
-    
+            const target = event.target as Node
             if (createModalRef.current && !createModalRef.current.contains(target)) {
-                setCreateModal(false);
-                setChangedPlanName("")
+                setCreateModal(false)
+                setPlanName("")
             }
         }
     
@@ -178,7 +203,7 @@ const MainDashboard = (props : Props) => {
                                                                 style={{ position : "fixed" }}
                                                                 initial={{
                                                                     opacity: showCreateModal ? 0 : 1,
-                                                                    y: -20,
+                                                                    y: -35,
                                                                 }}
                                                                 animate={{
                                                                     x: showCreateModal ? [100, 40] : [40, 100],
@@ -190,12 +215,12 @@ const MainDashboard = (props : Props) => {
                                                                 >
                                                                     <div 
                                                                         style={{ backgroundColor : "#333333"}}
-                                                                        className="z-50 w-96 h-42 rounded-md shadow-md flex">
+                                                                        className="z-50 w-96 rounded-md shadow-md flex">
                                                                         <div className="m-auto flex justify-around w-11/12">
                                                                             <div className="input-container w-full">
                                                                                 <input 
-                                                                                    value={changedPlanName}
-                                                                                    onChange={(e) => setChangedPlanName(e.target.value)}
+                                                                                    value={planName}
+                                                                                    onChange={(e) => setPlanName(e.target.value)}
                                                                                     style={{ backgroundColor : "#333333", color : "white" }}
                                                                                     className="outline-none w-full auth-input"
                                                                                     type="text" required/>
@@ -206,7 +231,7 @@ const MainDashboard = (props : Props) => {
                                                                             <div className="flex items-center justify-centers">
                                                                                 <button onClick={(e) => handleSaveNewPlan(e)}>
                                                                                     {
-                                                                                        changedPlanName !== "" 
+                                                                                        planName !== "" 
                                                                                             ? <IoCheckmarkDoneSharp style={{ color : "green"}} className="w-6 h-6"/>
                                                                                             : <IoCloseCircleOutline  style={{ color : "white"}} className="w-6 h-6"/>
                                                                                     }
@@ -223,12 +248,56 @@ const MainDashboard = (props : Props) => {
                                                             return (
                                                                 <div 
                                                                     key={plan._id}
-                                                                    onClick={() => (setSelectedPlan(plan), setDropDown(false))}
+                                                                    onDoubleClick={() => (setSelectedPlan(plan), setDropDown(false))}
                                                                     className="onHover bg-white flex justify-between p-4 text-left rounded-md">
                                                                     <h1>{plan.plan_name}</h1>
                                                                     <div className="flex w-12 items-center justify-between">
-                                                                        <FiEdit2 />
+                                                                        <FiEdit2 onClick={() => {
+                                                                            setNewPlanName(plan.plan_name)
+                                                                            setPlanToEdit(plan._id) // sets the selected plan to edit
+                                                                        }}/>
                                                                         <AiOutlineDelete />
+                                                                        <motion.div 
+                                                                            style={{ position : "fixed" }}
+                                                                            initial={{
+                                                                                opacity: plan._id === planToEdit ? 0 : 1,
+                                                                                y: -10,
+                                                                            }}
+                                                                            animate={{
+                                                                                x: plan._id === planToEdit ? [80, 90] : [80, 80],
+                                                                                opacity: plan._id == planToEdit ? 1 : 0
+                                                                            }}
+                                                                            transition={{
+                                                                                duration: plan._id == planToEdit ? 0.3 : 0
+                                                                            }}
+                                                                            >
+                                                                                <div 
+                                                                                    style={{ backgroundColor : "#333333"}}
+                                                                                    className="z-50 w-96 h-42 rounded-md shadow-md flex">
+                                                                                    <div className="m-auto flex justify-around w-11/12">
+                                                                                        <div className="input-container w-full">
+                                                                                            <input 
+                                                                                                value={newPlanName}
+                                                                                                onChange={(e) => setNewPlanName(e.target.value)}
+                                                                                                style={{ backgroundColor : "#333333", color : "white" }}
+                                                                                                className="outline-none w-full auth-input"
+                                                                                                type="text" required/>
+                                                                                            <label 
+                                                                                                style={{ backgroundColor : "transparent", color : "white"}}
+                                                                                                htmlFor="">Edit Plan Name</label>
+                                                                                        </div>
+                                                                                        <div className="flex items-center justify-centers">
+                                                                                            <button onClick={(e) => { newPlanName !== "" && newPlanName !== plan.plan_name ? handleEditPlan(plan._id, e) : setPlanToEdit("")}}>
+                                                                                                {
+                                                                                                    newPlanName !== "" && newPlanName !== plan.plan_name
+                                                                                                        ? <IoCheckmarkDoneSharp style={{ color : "green"}} className="w-6 h-6"/>
+                                                                                                        : <IoCloseCircleOutline  style={{ color : "white"}} className="w-6 h-6"/>
+                                                                                                }
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                        </motion.div>
                                                                     </div>
                                                                 </div>
                                                             )
@@ -282,8 +351,7 @@ const MainDashboard = (props : Props) => {
                                                                             <div 
                                                                                 onClick={() => {(
                                                                                     flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude)), 
-                                                                                    setSelectedPlace(place),
-                                                                                    console.log(place)
+                                                                                    setSelectedPlace(place)
                                                                                     )
                                                                                 }}
                                                                                 key={place.location_id}

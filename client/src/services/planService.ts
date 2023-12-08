@@ -59,3 +59,26 @@ export const createPlan = async (user : { accessToken : string }, plan_name : st
         }
     }
 }
+
+export const editPlanName = async (user : { accessToken : string }, new_plan_name : string, plan_id : string) => {
+    try {
+        const editPlan = await axios.put(`${import.meta.env.VITE_API_URL}/api/plans/${plan_id}`, 
+            { new_plan_name },
+            {
+                headers : {
+                    Authorization : `Bearer ${user.accessToken}`
+                }
+            }
+        )
+        return editPlan
+    } catch (err) {
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse;
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
+    }
+}
