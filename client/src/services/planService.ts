@@ -82,3 +82,23 @@ export const editPlanName = async (user : { accessToken : string }, new_plan_nam
         }
     }
 }
+
+export const deletePlanById = async (user : { accessToken : string }, plan_id : string) => {
+    try {
+        const deletePlan = await axios.delete(`${import.meta.env.VITE_API_URL}/api/plans/${plan_id}`, {
+            headers : {
+                Authorization : `Bearer ${user.accessToken}`
+            }
+        })
+        return deletePlan
+    } catch (err) {
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
+    }
+}

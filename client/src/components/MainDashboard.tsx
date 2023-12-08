@@ -19,7 +19,7 @@ import Cal from "./Cal";
 import dayjs from "dayjs";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { motion } from "framer-motion"
-import { createPlan } from "../services/planService";
+import { createPlan, deletePlanById } from "../services/planService";
 import { UserContext } from "../context/userContext";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { editPlanName } from "../services/planService";
@@ -134,6 +134,23 @@ const MainDashboard = (props : Props) => {
             }
         }
         setPlanToEdit("")
+    }
+
+    const handleDeletePlan = async (plan_id : string) => {
+        if (user) {
+            const deletePlan = await deletePlanById(user, plan_id)
+            if (deletePlan?.status == 200) {
+                // remove the deleted plan from the plans state
+                const updatedPlans = plans.filter(plan => plan._id !== plan_id);
+                setPlans(updatedPlans);
+                if (selectedPlan && selectedPlan._id === plan_id) {
+                    setSelectedPlan(null)
+                }
+                toast.success("Plan Deleted")
+            } else {
+                toast.error("Could not delete plan")
+            }
+        }
     }
 
     useEffect(() => {
@@ -256,7 +273,9 @@ const MainDashboard = (props : Props) => {
                                                                             setNewPlanName(plan.plan_name)
                                                                             setPlanToEdit(plan._id) // sets the selected plan to edit
                                                                         }}/>
-                                                                        <AiOutlineDelete />
+                                                                        <AiOutlineDelete onClick={() => {
+                                                                            handleDeletePlan(plan._id)
+                                                                        }} />
                                                                         <motion.div 
                                                                             style={{ position : "fixed" }}
                                                                             initial={{
