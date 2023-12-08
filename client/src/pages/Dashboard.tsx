@@ -14,6 +14,8 @@ import { MarkerContext } from "../context/markerContext";
 import { Place } from "../interfaces/place";
 import MarkerPopUp from "../components/MarkerPopUp";
 import { SelectedPlaceContext } from "../context/selectedPlaceContext";
+import { ModalContext } from "../context/modalContext";
+import Modal from "../components/Modal";
 
 
 type UserLocationState = {
@@ -26,7 +28,8 @@ const Dashboard = () => {
     const { user } = useContext(UserContext)
     const { setPlans } = useContext(PlansContext)
     const { markers } = useContext(MarkerContext)
-    const { selectedPlaceId, setPlaceId } = useContext(SelectedPlaceContext)
+    const { selectedPlace, setSelectedPlace } = useContext(SelectedPlaceContext)
+    const { modal } = useContext(ModalContext)
 
     const navigate = useNavigate()
 
@@ -107,6 +110,7 @@ const Dashboard = () => {
     return (
         <>
             <div className="flex w-full h-full overflow-hidden">
+                { modal && <Modal /> }
                 <Sidebar
                     sidebarItem={sidebarItem}
                     select={select}
@@ -151,7 +155,7 @@ const Dashboard = () => {
                                                 <Marker    
                                                     onClick={() => {
                                                         flyToLocation(parseFloat(place.longitude), parseFloat(place.latitude))
-                                                        setPlaceId(place.location_id)
+                                                        setSelectedPlace(place)
                                                     }}
                                                     key={place.location_id}
                                                     longitude={parseFloat(place.longitude)}
@@ -163,7 +167,7 @@ const Dashboard = () => {
                                                                 src="https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png" 
                                                                 alt="" 
                                                                 />
-                                                                { selectedPlaceId == place.location_id && <MarkerPopUp place={place}/> }
+                                                                { selectedPlace?.location_id == place.location_id && <MarkerPopUp place={place}/> }
                                                         </div>
                                                 </Marker>
                                         )

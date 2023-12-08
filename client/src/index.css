@@ -23,6 +23,9 @@ body {
 .onHover2:hover {
   background-color: rgb(235, 238, 241);
 }
+.onHover-dark:hover {
+  background-color: rgb(68, 68, 68) !important;
+}
 
 /* Style the scrollbar itself */
 ::-webkit-scrollbar {
@@ -42,4 +45,29 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555; /* color of the scroll thumb on hover */
+}
+
+
+/* Custom Styles for Calendar Component in Modal*/
+.MuiPickersLayout-root {
+  background-color: #333333 !important;
+}
+
+main .MuiPickersLayout-root {
+  background-color: white !important;
+}
+.modal .MuiTypography-root, 
+.modal .MuiButtonBase-root {
+  color: white !important;
+}
+.MuiDialogActions-root button, 
+main .MuiPickersToolbar-root  {
+  display: none;
+}
+
+.MuiTypography-root, 
+.MuiButtonBase-root, 
+.MuiPickersLayout-root, 
+.MuiPickersCalendarHeader-label {
+  font-family: "Poppins", sans-serif !important;
 }

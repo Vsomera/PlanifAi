@@ -1,5 +1,10 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify"
+import { SavedPlace } from "../interfaces/place"
+
+interface ApiErrorResponse {
+    error: string
+}
 
 export const fetchPlans = async (user : { accessToken : string }) => {
     try {
@@ -12,5 +17,88 @@ export const fetchPlans = async (user : { accessToken : string }) => {
     } catch (err) {
         console.log(err)
         toast.error("An error occurred fetching plans")
+    }
+}
+
+export const savePlaceToPlan = async (user : { accessToken : string }, selectedPlanId : string, place : SavedPlace) => {
+    try {
+        const addPlace = await axios.post(`${import.meta.env.VITE_API_URL}/api/plans/${selectedPlanId}`, { place },{
+            headers : {
+                Authorization : `Bearer ${user.accessToken}`
+            }
+        }) 
+        return addPlace
+    } catch (err) {
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse;
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
+    }
+}
+
+export const createPlan = async (user : { accessToken : string }, plan_name : string) => {
+    try {
+        const newPlan = await axios.post(`${import.meta.env.VITE_API_URL}/api/plans`, { plan_name }, {
+            headers : {
+                Authorization : `Bearer ${user.accessToken}`
+            }
+        })
+        return newPlan
+     } catch (err) {
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse;
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
+    }
+}
+
+export const editPlanName = async (user : { accessToken : string }, new_plan_name : string, plan_id : string) => {
+    try {
+        const editPlan = await axios.put(`${import.meta.env.VITE_API_URL}/api/plans/${plan_id}`, 
+            { new_plan_name },
+            {
+                headers : {
+                    Authorization : `Bearer ${user.accessToken}`
+                }
+            }
+        )
+        return editPlan
+    } catch (err) {
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse;
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
+    }
+}
+
+export const deletePlanById = async (user : { accessToken : string }, plan_id : string) => {
+    try {
+        const deletePlan = await axios.delete(`${import.meta.env.VITE_API_URL}/api/plans/${plan_id}`, {
+            headers : {
+                Authorization : `Bearer ${user.accessToken}`
+            }
+        })
+        return deletePlan
+    } catch (err) {
+        const axiosError = err as AxiosError
+        console.log(axiosError)
+        if (axiosError.response) {
+            const responseData = axiosError.response.data as ApiErrorResponse
+            toast.error(responseData.error)
+        } else {
+            toast.error("Could not add place to plan")
+        }
     }
 }
