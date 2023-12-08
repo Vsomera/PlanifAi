@@ -76,7 +76,7 @@ const MainDashboard = (props : Props) => {
 
     const { setMarkers } = useContext(MarkerContext) // for setting map markers (basically and array of place objects)
 
-    const [nearbyOrMap, toggleNearbyOrMap] = useState(false)
+    // const [nearbyOrMap, toggleNearbyOrMap] = useState(false)
 
     const handleNearby = async (fetchOption : number) => {
         // fetch nearby places from user coordinates
