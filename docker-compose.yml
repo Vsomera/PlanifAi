@@ -14,14 +14,14 @@ services:
       - project-network-net
 
   server:
-    build: /server
+    build: ./server
     ports: 
       - '5050:5050'
     networks:
       - project-network-net
 
   client:
-    build: /client
+    build: ./client
     ports: 
       - '4173:4173'
     networks:
