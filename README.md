@@ -1,7 +1,7 @@
 
 # PlanifAi
 
-Travel Planner with Ai Features
+Travel Planner with Ai Features (in-progress)
 
 
 ## How to Run with Docker
@@ -28,4 +28,6 @@ SERVER : http://localhost:5050
 
 DATABASE : mongodb://localhost:27017 
 
-Server API Documentation : https://documenter.getpostman.com/view/25680819/2s9YXnzJt8
+![App Screenshot](https://cdn.discordapp.com/attachments/838245124827774997/1185801706936737903/image.png?ex=6590eee6&is=657e79e6&hm=33f4561915551001fce6b3da3cbd1df90661c604e48129bb47ff080658bf4ebb&)
+
+
