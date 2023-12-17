@@ -6,7 +6,7 @@ services:
     image: mongo
     container_name: mongo_db
     ports:
-      - "27017:27017"
+      - "27017"
     volumes:
       - db_data:/foo
       - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
@@ -16,14 +16,14 @@ services:
   server:
     build: ./server
     ports: 
-      - '5050:5050'
+      - "5050:5050" # external:internal
     networks:
       - project-network-net
 
   client:
     build: ./client
     ports: 
-      - '4173:4173'
+      - '4173:4173' # external:internal
     networks:
       - project-network-net
 
