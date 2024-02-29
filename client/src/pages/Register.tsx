@@ -5,6 +5,8 @@ import { UserContext } from "../context/userContext"
 import { toast } from "react-toastify"
 import ReactLoading from 'react-loading';
 import AppLogo from "../assets/AppLogo"
+import airplaneImage from "../images/airplane.jpeg"
+
 
 const Register = () => {
 
@@ -78,7 +80,7 @@ const Register = () => {
                 <div className="h-full p-3">
                     <img 
                         className="h-full w-full object-cover rounded-3xl"
-                        src="https://cdn.discordapp.com/attachments/838245124827774997/1174152644047151236/airplane.jpeg?ex=65668ddd&is=655418dd&hm=3700a59715ddfc12ceba106bebd1c40233a51f3f498d1017129c4aa50ca14a91&" alt="" />
+                        src={airplaneImage} alt="" />
                     {/* <div className="gradient-overlay rounded-3xl absolute inset-3" /> */}
                 </div>
             </div>
